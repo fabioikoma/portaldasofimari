@@ -282,6 +282,40 @@
   .alt.errada{background:#8E3A3A}
   .alt:disabled{cursor:default}
 
+  /* ---------- Capitais do Mundo ---------- */
+  .capPais{
+    align-self:center; text-align:center; max-width:100%;
+    border:4px double var(--ceu); border-radius:22px; padding:14px 26px;
+    background:rgba(92,200,232,.10); transform:rotate(-1.5deg);
+  }
+  .capPais .acima{
+    font-family:'Baloo 2',sans-serif; font-weight:600; font-size:.78rem;
+    letter-spacing:2px; text-transform:uppercase; color:var(--ceu); display:block;
+  }
+  .capPais .nome{
+    font-family:'Baloo 2',sans-serif; font-weight:800; display:block;
+    font-size:clamp(1.5rem,5.6vw,2.4rem); line-height:1.1; margin:5px 0 3px; text-wrap:balance;
+  }
+  .capPais .abaixo{font-size:.9rem; color:#BFDACD; display:block}
+  .capCuriosidade{
+    max-width:520px; margin:0 auto; text-align:center; font-size:1rem; line-height:1.5;
+    color:#DCEFE4; background:rgba(255,246,230,.07); border-radius:18px; padding:12px 16px;
+  }
+  .capAviso{
+    text-align:center; font-family:'Baloo 2',sans-serif; font-weight:800;
+    font-size:clamp(1.1rem,4vw,1.45rem); margin:0;
+  }
+  .capAviso.ok{color:var(--folha)}
+  .capAviso.nao{color:#FF9E8A}
+  .capBolinhas{display:flex; gap:6px; flex-wrap:wrap; justify-content:center}
+  .capBolinhas i{
+    width:13px; height:13px; border-radius:50%;
+    border:2px solid rgba(255,246,230,.35); display:block;
+  }
+  .capBolinhas i.ok{background:var(--folha); border-color:var(--folha)}
+  .capBolinhas i.nao{background:#C6544F; border-color:#C6544F}
+  .capBolinhas i.agora{border-color:var(--sol); background:rgba(255,197,61,.4)}
+
   /* ---------- Fim de jogo ---------- */
   .overlay{position:fixed; inset:0; z-index:5; background:rgba(6,24,19,.88); display:flex; align-items:center; justify-content:center; padding:18px}
   .caixa-fim{
@@ -340,6 +374,11 @@
       <span class="icone">🧠</span>
       <span class="titulo">Quiz</span>
       <span class="desc">10 perguntas de bicho, cor, número e Brasil</span>
+    </button>
+    <button class="cartao" data-jogo="capitais" style="--cor:#FF7A3D">
+      <span class="icone">🌍</span>
+      <span class="titulo">Capitais do Mundo</span>
+      <span class="desc">Descubra a capital de cada país, sozinha ou em dupla</span>
     </button>
   </section>
 
@@ -1110,6 +1149,362 @@
 
     repetirAtual = comecar;
     comecar();
+  };
+
+  /* =====================================================
+     6) CAPITAIS DO MUNDO
+     ===================================================== */
+  var CAP_AMERICA = [
+    "Brasil|Brasília|Brasília foi construída do zero no meio do cerrado e ficou pronta em 1960.",
+    "Argentina|Buenos Aires|O nome quer dizer 'bons ares' — os marinheiros acharam o ar de lá muito bom.",
+    "Chile|Santiago|",
+    "Uruguai|Montevidéu|",
+    "Paraguai|Assunção|",
+    "Peru|Lima|Quase um terço de todos os peruanos mora em Lima.",
+    "Bolívia|Sucre|A Bolívia tem duas: Sucre é a capital oficial e La Paz é onde fica o governo.",
+    "Colômbia|Bogotá|Bogotá fica a 2.640 metros de altura — mais alta que qualquer montanha do Brasil.",
+    "Venezuela|Caracas|",
+    "Equador|Quito|A linha do Equador passa pertinho da cidade: dá para ficar com um pé em cada metade do mundo.",
+    "Guiana|Georgetown|",
+    "Suriname|Paramaribo|",
+    "Estados Unidos|Washington|Cuidado: a maior cidade é Nova York, mas a capital é Washington.",
+    "Canadá|Ottawa|Nem Toronto nem Montreal: quem manda é Ottawa.",
+    "México|Cidade do México|Foi construída em cima de um lago antigo — e por isso afunda alguns centímetros por ano.",
+    "Cuba|Havana|",
+    "Jamaica|Kingston|",
+    "Costa Rica|San José|",
+    "Panamá|Cidade do Panamá|Perto dali fica o canal que liga o oceano Atlântico ao Pacífico.",
+    "Guatemala|Cidade da Guatemala|",
+    "Haiti|Porto Príncipe|",
+    "República Dominicana|Santo Domingo|É a cidade mais antiga fundada por europeus nas Américas.",
+    "Honduras|Tegucigalpa|",
+    "Nicarágua|Manágua|",
+    "El Salvador|San Salvador|",
+    "Bahamas|Nassau|"
+  ];
+
+  var CAP_EUROASIA = [
+    "Portugal|Lisboa|",
+    "Espanha|Madri|",
+    "França|Paris|A Torre Eiffel cresce alguns centímetros no verão, porque o ferro dilata com o calor.",
+    "Itália|Roma|Dentro de Roma existe outro país inteiro: o Vaticano, o menor do mundo.",
+    "Alemanha|Berlim|",
+    "Reino Unido|Londres|",
+    "Irlanda|Dublin|",
+    "Países Baixos|Amsterdã|A cidade tem mais de 1.500 pontes, porque é cheia de canais.",
+    "Bélgica|Bruxelas|",
+    "Suíça|Berna|Pegadinha clássica: não é Zurique nem Genebra.",
+    "Áustria|Viena|",
+    "Grécia|Atenas|Foi lá que nasceram as Olimpíadas, há mais de 2.700 anos.",
+    "Suécia|Estocolmo|",
+    "Noruega|Oslo|",
+    "Dinamarca|Copenhague|",
+    "Finlândia|Helsinque|",
+    "Polônia|Varsóvia|",
+    "Rússia|Moscou|A Rússia é o maior país do mundo e passa por 11 fusos de horário diferentes.",
+    "Ucrânia|Kiev|",
+    "Hungria|Budapeste|Eram duas cidades, Buda e Peste, separadas por um rio. Juntaram as duas e o nome também.",
+    "República Tcheca|Praga|",
+    "Croácia|Zagreb|",
+    "Romênia|Bucareste|",
+    "Islândia|Reykjavik|A cidade é aquecida com água quente que sai de vulcões debaixo da terra.",
+    "Turquia|Ancara|Pegadinha: Istambul é a maior cidade, mas a capital é Ancara.",
+    "Japão|Tóquio|É a região urbana com mais gente do planeta: mais de 37 milhões de pessoas.",
+    "China|Pequim|A Muralha da China passa pertinho de Pequim.",
+    "Coreia do Sul|Seul|",
+    "Índia|Nova Délhi|Pegadinha: a maior cidade é Mumbai, mas a capital é Nova Délhi.",
+    "Tailândia|Bangkok|O nome completo da cidade em tailandês tem 168 letras — é o mais longo do mundo.",
+    "Vietnã|Hanói|",
+    "Indonésia|Jacarta|",
+    "Filipinas|Manila|",
+    "Malásia|Kuala Lumpur|",
+    "Singapura|Singapura|O país é praticamente uma cidade só — por isso o nome é o mesmo.",
+    "Paquistão|Islamabade|",
+    "Bangladesh|Daca|",
+    "Nepal|Katmandu|De lá saem os alpinistas que vão escalar o Monte Everest.",
+    "Irã|Teerã|",
+    "Iraque|Bagdá|",
+    "Arábia Saudita|Riade|",
+    "Emirados Árabes Unidos|Abu Dhabi|Pegadinha: o prédio mais alto do mundo fica em Dubai, mas a capital é Abu Dhabi.",
+    "Catar|Doha|",
+    "Cazaquistão|Astana|",
+    "Mongólia|Ulan Bator|É a capital mais fria do mundo: no inverno faz até 40 graus negativos.",
+    "Camboja|Phnom Penh|",
+    "Coreia do Norte|Pyongyang|",
+    "Afeganistão|Cabul|",
+    "Síria|Damasco|É uma das cidades habitadas mais antigas do mundo.",
+    "Jordânia|Amã|",
+    "Líbano|Beirute|"
+  ];
+
+  var CAP_RESTO = [
+    "Egito|Cairo|As pirâmides de Gizé ficam bem na beirada da cidade.",
+    "África do Sul|Pretória|Esse país é campeão: tem três capitais! Pretória governa, Cidade do Cabo faz as leis e Bloemfontein julga.",
+    "Nigéria|Abuja|Pegadinha: Lagos é bem maior, mas a capital é Abuja.",
+    "Quênia|Nairóbi|Existe um parque com leões e girafas dentro da cidade.",
+    "Marrocos|Rabat|",
+    "Etiópia|Adis Abeba|",
+    "Gana|Acra|",
+    "Senegal|Dacar|",
+    "Tanzânia|Dodoma|",
+    "Angola|Luanda|",
+    "Moçambique|Maputo|",
+    "Argélia|Argel|A Argélia é o maior país da África.",
+    "Tunísia|Túnis|",
+    "Camarões|Iaundé|",
+    "Uganda|Kampala|",
+    "Zimbábue|Harare|",
+    "Madagascar|Antananarivo|A ilha tem bichos que não existem em nenhum outro lugar, como os lêmures.",
+    "Cabo Verde|Praia|",
+    "Austrália|Camberra|Pegadinha famosa: não é Sydney nem Melbourne. Camberra foi criada só para ser a capital e acabar com a briga entre as duas.",
+    "Nova Zelândia|Wellington|",
+    "Fiji|Suva|",
+    "Papua-Nova Guiné|Port Moresby|Ali se falam mais de 800 línguas diferentes.",
+    "Butão|Timphu|O país mede a Felicidade Interna Bruta em vez de só medir dinheiro.",
+    "Quirguistão|Bisqueque|",
+    "Uzbequistão|Tashkent|",
+    "Azerbaijão|Baku|",
+    "Geórgia|Tbilisi|",
+    "Armênia|Ierevan|",
+    "Belarus|Minsk|",
+    "Letônia|Riga|",
+    "Lituânia|Vilnius|",
+    "Estônia|Tallinn|",
+    "Eslovênia|Liubliana|",
+    "Eslováquia|Bratislava|",
+    "Sérvia|Belgrado|",
+    "Bulgária|Sófia|",
+    "Albânia|Tirana|",
+    "Malta|Valeta|",
+    "Luxemburgo|Luxemburgo|",
+    "Mônaco|Mônaco|O país inteiro é menor que muitos bairros de Curitiba.",
+    "Laos|Vientiane|",
+    "Brunei|Bandar Seri Begawan|",
+    "Maldivas|Malé|",
+    "Namíbia|Windhoek|",
+    "Botsuana|Gaborone|",
+    "Zâmbia|Lusaka|",
+    "Ruanda|Kigali|",
+    "Mali|Bamako|",
+    "Costa do Marfim|Yamoussoukro|Outra com duas caras: Yamoussoukro é a capital oficial, mas quase tudo acontece em Abidjan."
+  ];
+
+  jogos.capitais = function(){
+    var COR = "#FF7A3D";
+    var NIVEIS = [
+      {emoji:"🌎", texto:"Fácil · América",        lista:CAP_AMERICA},
+      {emoji:"🌍", texto:"Médio · Europa e Ásia",  lista:CAP_EUROASIA},
+      {emoji:"🌏", texto:"Difícil · o mundo todo", lista:CAP_AMERICA.concat(CAP_EUROASIA, CAP_RESTO)}
+    ];
+    var conf = {nivel:0, jogadoras:1, nomes:["Sofi","Mari"]};
+
+    function telaEscolha(){
+      palco.innerHTML="";
+      cabecalho("Capitais do Mundo", COR);
+      var p = criar("div","painel");
+
+      var g1 = criar("div","grupo");
+      g1.appendChild(criar("span","rotulo","De onde são os países"));
+      var e1 = criar("div","escolhas");
+      NIVEIS.forEach(function(n, i){
+        var b = criar("button","opcao",'<span>'+n.emoji+'</span>'+n.texto);
+        b.setAttribute("aria-pressed", i===conf.nivel ? "true":"false");
+        b.addEventListener("click", function(){
+          conf.nivel=i; som.toque();
+          Array.prototype.forEach.call(e1.children,function(x){x.setAttribute("aria-pressed","false")});
+          b.setAttribute("aria-pressed","true");
+        });
+        e1.appendChild(b);
+      });
+      g1.appendChild(e1); p.appendChild(g1);
+
+      var g2 = criar("div","grupo");
+      g2.appendChild(criar("span","rotulo","Quem vai jogar"));
+      var e2 = criar("div","escolhas");
+      var caixaNomes = criar("div","nomes");
+      caixaNomes.innerHTML = '<input id="cN1" value="'+escapar(conf.nomes[0])+'" maxlength="14" aria-label="Nome da jogadora 1">'+
+                             '<input id="cN2" value="'+escapar(conf.nomes[1])+'" maxlength="14" aria-label="Nome da jogadora 2">';
+      caixaNomes.hidden = (conf.jogadoras!==2);
+      [[1,"🙋‍♀️","Só eu"],[2,"👯‍♀️","Nós duas, revezando"]].forEach(function(o){
+        var b = criar("button","opcao",'<span>'+o[1]+'</span>'+o[2]);
+        b.setAttribute("aria-pressed", o[0]===conf.jogadoras ? "true":"false");
+        b.addEventListener("click", function(){
+          conf.jogadoras=o[0]; som.toque();
+          Array.prototype.forEach.call(e2.children,function(x){x.setAttribute("aria-pressed","false")});
+          b.setAttribute("aria-pressed","true");
+          caixaNomes.hidden = (o[0]!==2);
+        });
+        e2.appendChild(b);
+      });
+      g2.appendChild(e2); g2.appendChild(caixaNomes); p.appendChild(g2);
+
+      var jogar = criar("button","jogar","Começar a viagem! ✈️");
+      jogar.addEventListener("click", function(){
+        if(conf.jogadoras===2){
+          conf.nomes[0] = ($("cN1").value||"Sofi").trim() || "Sofi";
+          conf.nomes[1] = ($("cN2").value||"Mari").trim() || "Mari";
+        }
+        partida();
+      });
+      p.appendChild(jogar);
+      palco.appendChild(p);
+    }
+
+    function partida(){
+      palco.innerHTML="";
+      cabecalho("Capitais do Mundo", COR);
+
+      var lista = NIVEIS[conf.nivel].lista;
+      var total = conf.jogadoras===2 ? 12 : 10;
+
+      var placar   = criar("div","placar");
+      var bolinhas = criar("div","capBolinhas");
+      var barra2   = criar("div","barra");
+      var bTroca   = criar("button","mini","⚙️ Trocar o nível");
+      barra2.appendChild(bTroca);
+      var caixa = criar("div");
+      caixa.style.cssText = "display:flex; flex-direction:column; gap:16px";
+      palco.appendChild(placar);
+      palco.appendChild(bolinhas);
+      palco.appendChild(caixa);
+      palco.appendChild(barra2);
+
+      var st = null;
+
+      function desenharPlacar(){
+        placar.innerHTML="";
+        if(conf.jogadoras===2){
+          for(var i=0;i<2;i++){
+            var d = criar("div","caixa-placar"+(st.vez===i?" vez":""));
+            d.innerHTML = '<span class="quem">'+(st.vez===i?"▶ ":"")+escapar(conf.nomes[i])+'</span>'+
+                          '<span class="numero">'+st.pontos[i]+'</span>'+
+                          '<span class="rotulinho">capitais certas</span>';
+            placar.appendChild(d);
+          }
+        } else {
+          var a = criar("div","caixa-placar vez");
+          a.innerHTML = '<span class="quem">Acertos</span><span class="numero">'+st.pontos[0]+' / '+total+'</span><span class="rotulinho">capitais certas</span>';
+          var b2 = criar("div","caixa-placar");
+          b2.innerHTML = '<span class="quem">Pergunta</span><span class="numero">'+Math.min(st.i+1,total)+'</span><span class="rotulinho">de '+total+'</span>';
+          placar.appendChild(a); placar.appendChild(b2);
+        }
+      }
+
+      function desenharBolinhas(){
+        bolinhas.innerHTML="";
+        for(var k=0;k<total;k++){
+          var i2 = criar("i");
+          if(st.marcas[k]) i2.className = st.marcas[k];
+          else if(k===st.i) i2.className = "agora";
+          bolinhas.appendChild(i2);
+        }
+      }
+
+      function alternativas(certa){
+        var erradas = [], tentativas = 0;
+        while(erradas.length < 3 && tentativas < 400){
+          tentativas++;
+          var c = lista[Math.floor(Math.random()*lista.length)].split("|")[1];
+          if(c !== certa && erradas.indexOf(c) === -1) erradas.push(c);
+        }
+        return embaralhar(erradas.concat([certa]));
+      }
+
+      function desenhar(){
+        if(st.i >= total) return terminar();
+        var q = st.perguntas[st.i];
+        caixa.innerHTML="";
+        desenharPlacar();
+        desenharBolinhas();
+
+        var selo = criar("div","capPais");
+        selo.innerHTML = '<span class="acima">Qual é a capital de</span>'+
+                         '<span class="nome">'+escapar(q[0])+'</span>'+
+                         '<span class="abaixo">'+(conf.jogadoras===2 ? "vez de "+escapar(conf.nomes[st.vez]) : "pergunta "+(st.i+1)+" de "+total)+'</span>';
+        caixa.appendChild(selo);
+
+        var alts = criar("div","alternativas");
+        var botoes = [];
+        alternativas(q[1]).forEach(function(cap){
+          var b = criar("button","alt", escapar(cap));
+          b.addEventListener("click", function(){ responder(cap, q, botoes); });
+          botoes.push(b); alts.appendChild(b);
+        });
+        caixa.appendChild(alts);
+      }
+
+      function responder(escolha, q, botoes){
+        var acertou = escolha === q[1];
+        botoes.forEach(function(b){
+          b.disabled = true;
+          if(b.textContent === q[1]) b.classList.add("certa");
+          else if(b.textContent === escolha) b.classList.add("errada");
+        });
+
+        var aviso = criar("p","capAviso "+(acertou?"ok":"nao"));
+        if(acertou){
+          st.pontos[st.vez]++;
+          st.marcas[st.i] = "ok";
+          aviso.textContent = conf.jogadoras===2 ? "Isso, "+conf.nomes[st.vez]+"! 🎉" : "Isso! 🎉";
+          som.acerto();
+        } else {
+          st.marcas[st.i] = "nao";
+          aviso.textContent = "Quase! A capital é "+q[1]+".";
+          som.erro();
+        }
+        caixa.appendChild(aviso);
+
+        if(q[2]){
+          var cur = criar("p","capCuriosidade", escapar(q[2]));
+          caixa.appendChild(cur);
+        }
+
+        st.i++;
+        desenharPlacar();
+        desenharBolinhas();
+
+        var seguinte = st.vez===0 ? 1 : 0;
+        var proxima = criar("button","jogar",
+          st.i >= total ? "Ver quem ganhou 🏁"
+                        : (conf.jogadoras===2 ? "Vez de "+escapar(conf.nomes[seguinte])+" ➡️" : "Próxima ➡️"));
+        proxima.style.cssText = "font-size:1.15rem; padding:12px 30px";
+        proxima.addEventListener("click", function(){
+          som.toque();
+          if(conf.jogadoras===2) st.vez = seguinte;
+          desenhar();
+        });
+        caixa.appendChild(proxima);
+        proxima.focus();
+      }
+
+      function terminar(){
+        if(conf.jogadoras===2){
+          var a = st.pontos[0], b2 = st.pontos[1];
+          var detalhe = conf.nomes[0]+": "+a+" · "+conf.nomes[1]+": "+b2;
+          if(a === b2) mostrarFim("🤝","Empate!","As duas acertaram "+a+" capitais. "+detalhe, true);
+          else mostrarFim("🏆",(a>b2?conf.nomes[0]:conf.nomes[1])+" ganhou!", detalhe, true);
+        } else {
+          var n = st.pontos[0], msg;
+          if(n === total) msg = "Todas certas! Você conhece o mundo inteiro.";
+          else if(n >= total*0.7) msg = "Muito bem! Faltou pouquinho.";
+          else if(n >= total*0.4) msg = "Boa! Na próxima você acerta mais.";
+          else msg = "Tenta de novo, cada volta você aprende umas capitais novas.";
+          mostrarFim(n >= total*0.7 ? "🏆" : "🌍", "Você acertou "+n+" de "+total, msg, n >= total*0.7);
+        }
+      }
+
+      function comecar(){
+        var sorteio = embaralhar(lista.slice()).slice(0, total).map(function(s){ return s.split("|"); });
+        st = {perguntas:sorteio, i:0, vez:0, pontos:[0,0], marcas:[]};
+        desenhar();
+      }
+
+      repetirAtual = comecar;
+      bTroca.addEventListener("click", telaEscolha);
+      comecar();
+    }
+
+    telaEscolha();
   };
 
 })();
