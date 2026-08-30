@@ -1,0 +1,1119 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0A2620">
+<title>Portal da Sofi e Mari</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;700;900&display=swap">
+
+<style>
+  :root{
+    --mata:#0E3328;
+    --mata-fundo:#0A2620;
+    --mata-clara:#1A4C3D;
+    --creme:#FFF6E6;
+    --creme-sombra:#E9D9BC;
+    --tucano:#FF7A3D;
+    --sol:#FFC53D;
+    --flamingo:#FF6FA5;
+    --folha:#7DD86A;
+    --ceu:#5CC8E8;
+    --uva:#A98BFF;
+    --texto:#0E3328;
+    --raio:20px;
+  }
+  *{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(900px 520px at 12% -12%, #1B5545 0%, transparent 60%),
+      radial-gradient(760px 520px at 96% 0%, #17453A 0%, transparent 55%),
+      var(--mata-fundo);
+    color:var(--creme);
+    font-family:'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .folhagem{
+    position:fixed; inset:0; pointer-events:none; opacity:.16; z-index:0;
+    background-image:
+      radial-gradient(circle at 12% 22%, var(--folha) 0 3px, transparent 4px),
+      radial-gradient(circle at 78% 12%, var(--sol) 0 3px, transparent 4px),
+      radial-gradient(circle at 40% 78%, var(--ceu) 0 3px, transparent 4px),
+      radial-gradient(circle at 88% 62%, var(--flamingo) 0 3px, transparent 4px);
+    background-size:340px 340px, 420px 420px, 380px 380px, 300px 300px;
+  }
+
+  .wrap{
+    position:relative; z-index:1;
+    max-width:980px; margin:0 auto;
+    padding:26px 18px 60px;
+    display:flex; flex-direction:column; gap:20px;
+  }
+
+  h1{
+    font-family:'Baloo 2', 'Nunito', sans-serif; font-weight:800;
+    font-size:clamp(2rem, 6.5vw, 3.4rem); line-height:1; margin:0;
+    text-align:center; text-wrap:balance; text-shadow:0 4px 0 rgba(0,0,0,.25);
+  }
+  h1 .a{color:var(--sol)} h1 .b{color:var(--folha)} h1 .c{color:var(--flamingo)}
+  .sub{margin:0; text-align:center; color:#CFE6DA; font-size:1.02rem}
+
+  /* ---------- Menu ---------- */
+  .menu{
+    display:grid; gap:16px;
+    grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));
+  }
+  .cartao{
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    padding:24px 16px 20px;
+    border-radius:26px; cursor:pointer;
+    border:3px solid rgba(255,246,230,.2);
+    background:var(--mata-clara);
+    color:var(--creme);
+    font-family:'Baloo 2', sans-serif;
+    transition:transform .14s ease, border-color .14s ease, box-shadow .14s ease;
+    box-shadow:0 6px 0 rgba(0,0,0,.25);
+  }
+  .cartao:hover{transform:translateY(-5px); border-color:var(--cor); box-shadow:0 10px 0 rgba(0,0,0,.25)}
+  .cartao:active{transform:translateY(2px); box-shadow:0 3px 0 rgba(0,0,0,.25)}
+  .cartao .icone{font-size:3.2rem; line-height:1}
+  .cartao .titulo{font-weight:800; font-size:1.4rem; color:var(--cor); text-align:center}
+  .cartao .desc{font-family:'Nunito',sans-serif; font-weight:400; font-size:.92rem; color:#BFDACD; text-align:center; line-height:1.35}
+
+  /* ---------- Peças comuns ---------- */
+  #palco{display:flex; flex-direction:column; gap:18px}
+  .barra{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; align-items:center}
+
+  .mini{
+    font-family:'Baloo 2', sans-serif; font-weight:600; font-size:1rem;
+    background:var(--mata-clara); color:var(--creme);
+    border:2px solid rgba(255,246,230,.2); border-radius:16px;
+    padding:10px 16px; cursor:pointer;
+  }
+  .mini:hover{background:#235d4b}
+
+  .opcao{
+    font-family:'Baloo 2', sans-serif; font-weight:600; font-size:1.1rem;
+    color:var(--creme); background:var(--mata-clara);
+    border:3px solid rgba(255,246,230,.22); border-radius:var(--raio);
+    padding:11px 20px; cursor:pointer;
+    display:flex; align-items:center; gap:8px;
+    transition:transform .12s ease;
+  }
+  .opcao:hover{transform:translateY(-3px)}
+  .opcao[aria-pressed="true"]{background:var(--sol); color:var(--texto); border-color:#fff}
+
+  .jogar{
+    font-family:'Baloo 2', sans-serif; font-weight:800; font-size:1.4rem; letter-spacing:.5px;
+    color:#3A1400; background:var(--tucano);
+    border:none; border-radius:22px; padding:14px 38px; cursor:pointer;
+    box-shadow:0 6px 0 #C24A17; align-self:center;
+    transition:transform .1s ease, box-shadow .1s ease;
+  }
+  .jogar:hover{transform:translateY(-2px); box-shadow:0 8px 0 #C24A17}
+  .jogar:active{transform:translateY(4px); box-shadow:0 2px 0 #C24A17}
+
+  .painel{
+    background:rgba(255,246,230,.07);
+    border:2px solid rgba(255,246,230,.16);
+    border-radius:26px; padding:22px;
+    display:flex; flex-direction:column; gap:20px;
+  }
+  .grupo{display:flex; flex-direction:column; gap:12px; align-items:center}
+  .rotulo{
+    font-family:'Baloo 2', sans-serif; font-weight:600;
+    text-transform:uppercase; letter-spacing:2px; font-size:.82rem; color:var(--sol);
+  }
+  .escolhas{display:flex; flex-wrap:wrap; gap:10px; justify-content:center}
+
+  .nomes{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
+  .nomes input{
+    font-family:'Nunito',sans-serif; font-weight:700; font-size:1.05rem; text-align:center;
+    width:160px; padding:11px 14px; border-radius:16px;
+    border:3px solid rgba(255,246,230,.25); background:var(--mata); color:var(--creme);
+  }
+
+  .placar{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
+  .caixa-placar{
+    background:rgba(255,246,230,.08); border:3px solid transparent;
+    border-radius:18px; padding:10px 18px; min-width:140px; text-align:center;
+    transition:border-color .18s ease, background .18s ease, transform .18s ease;
+  }
+  .caixa-placar.vez{border-color:var(--sol); background:rgba(255,197,61,.16); transform:translateY(-3px)}
+  .caixa-placar .quem{
+    font-family:'Baloo 2',sans-serif; font-weight:600; font-size:1rem; display:block;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .caixa-placar .numero{
+    display:block;
+    font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1.9rem; color:var(--sol);
+    font-variant-numeric:tabular-nums; line-height:1.15;
+  }
+  .caixa-placar .rotulinho{display:block; font-size:.72rem; letter-spacing:1.4px; text-transform:uppercase; color:#A9CBBD}
+
+  h2.tituloJogo{
+    font-family:'Baloo 2',sans-serif; font-weight:800; margin:0; text-align:center;
+    font-size:clamp(1.6rem,5vw,2.4rem); color:var(--cor);
+  }
+
+  button:focus-visible, input:focus-visible, .cartao:focus-visible{outline:4px solid var(--ceu); outline-offset:3px}
+  [hidden]{display:none !important}
+
+  /* ---------- Memória ---------- */
+  .tabuleiro{display:grid; gap:clamp(8px,1.6vw,14px); justify-content:center; align-content:start; width:100%; perspective:1200px}
+  .tabuleiro.n12, .tabuleiro.n16{grid-template-columns:repeat(4, clamp(74px,16vw,124px))}
+  .tabuleiro.n24{grid-template-columns:repeat(6, clamp(70px,11vw,114px))}
+  .carta{
+    position:relative; width:100%; aspect-ratio:3/4;
+    background:none; border:none; padding:0; cursor:pointer;
+    transform-style:preserve-3d; transition:transform .45s cubic-bezier(.3,1.3,.5,1);
+  }
+  .carta.virada, .carta.achou{transform:rotateY(180deg)}
+  .face{
+    position:absolute; inset:0; border-radius:var(--raio);
+    backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2%;
+    box-shadow:0 6px 0 rgba(0,0,0,.22); overflow:hidden;
+  }
+  .verso{
+    background:repeating-linear-gradient(45deg, rgba(0,0,0,.10) 0 10px, transparent 10px 20px), linear-gradient(160deg,#2E7D5F,#1C5744);
+    border:3px solid rgba(255,246,230,.28); font-size:clamp(1.3rem,4vw,2.2rem);
+  }
+  .verso span{opacity:.85}
+  .frente{
+    transform:rotateY(180deg);
+    background:linear-gradient(175deg,var(--creme),#FFEFD2);
+    border:3px solid var(--creme-sombra); color:var(--texto); padding:6% 4%;
+  }
+  .frente .bicho{font-size:clamp(1.8rem,5.4vw,3rem); line-height:1}
+  .frente .nome{
+    font-family:'Baloo 2',sans-serif; font-weight:800;
+    font-size:clamp(.62rem,1.5vw,.9rem); letter-spacing:.8px; text-transform:uppercase;
+    text-align:center; line-height:1.05;
+  }
+  .carta.achou .frente{background:linear-gradient(175deg,#E9FBDF,#CFF3C0); border-color:var(--folha); animation:pulo .5s ease}
+  .carta.erro .frente{animation:tremer .4s ease}
+  @keyframes pulo{0%{transform:rotateY(180deg) scale(1)}45%{transform:rotateY(180deg) scale(1.12)}100%{transform:rotateY(180deg) scale(1)}}
+  @keyframes tremer{0%,100%{transform:rotateY(180deg) translateX(0)}25%{transform:rotateY(180deg) translateX(-6px)}75%{transform:rotateY(180deg) translateX(6px)}}
+
+  /* ---------- Velha ---------- */
+  .velha{display:grid; grid-template-columns:repeat(3, clamp(74px,22vw,120px)); gap:10px; justify-content:center}
+  .casa{
+    aspect-ratio:1; border-radius:20px; cursor:pointer;
+    background:linear-gradient(170deg,#FFF6E6,#FFEFD2);
+    border:3px solid var(--creme-sombra); box-shadow:0 6px 0 rgba(0,0,0,.22);
+    font-size:clamp(2.4rem,9vw,3.6rem); line-height:1;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .12s ease;
+  }
+  .casa:hover:not(.ocupada){transform:translateY(-4px)}
+  .casa.ocupada{cursor:default}
+  .casa.ganhadora{background:linear-gradient(170deg,#E9FBDF,#B9EFA4); border-color:var(--folha); animation:pisca .7s ease infinite alternate}
+  @keyframes pisca{from{transform:scale(1)}to{transform:scale(1.06)}}
+
+  /* ---------- Forca ---------- */
+  .palavra{display:flex; gap:9px; flex-wrap:wrap; justify-content:center; margin:4px 0 2px}
+  .letra{
+    width:clamp(28px,7vw,44px); height:clamp(40px,9vw,58px);
+    border-bottom:5px solid var(--sol); border-radius:8px 8px 4px 4px;
+    background:rgba(255,246,230,.09);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(1.4rem,5vw,2.1rem);
+    color:var(--creme);
+  }
+  .letra.faltando{color:transparent}
+  .teclado{display:flex; flex-wrap:wrap; gap:7px; justify-content:center; max-width:620px; margin:0 auto}
+  .tecla{
+    width:clamp(34px,8vw,46px); height:clamp(38px,8vw,48px);
+    border-radius:12px; cursor:pointer;
+    font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1.1rem;
+    background:var(--mata-clara); color:var(--creme);
+    border:2px solid rgba(255,246,230,.22);
+  }
+  .tecla:hover:not(:disabled){background:#2a6b56}
+  .tecla:disabled{cursor:default; opacity:.35}
+  .tecla.certa{background:var(--folha); color:#0E3328; border-color:#fff; opacity:1}
+  .tecla.errada{background:#8E3A3A; opacity:.55}
+  .boneco{width:min(190px,44vw); height:auto; display:block; margin:0 auto}
+  .boneco line, .boneco circle{stroke:var(--creme); stroke-width:5; stroke-linecap:round; fill:none}
+  .boneco .madeira{stroke:#C79A5B}
+  .dica{text-align:center; font-size:1.05rem; color:#CFE6DA}
+  .dica b{color:var(--sol)}
+
+  /* ---------- Ache o diferente ---------- */
+  .campo{display:grid; gap:10px; justify-content:center; width:100%}
+  .bichinho{
+    background:rgba(255,246,230,.08); border:2px solid rgba(255,246,230,.14);
+    border-radius:16px; cursor:pointer; aspect-ratio:1;
+    display:flex; align-items:center; justify-content:center;
+    font-size:clamp(1.6rem,5vw,2.6rem); line-height:1;
+    transition:transform .1s ease, background .1s ease;
+  }
+  .bichinho:hover{transform:scale(1.08); background:rgba(255,246,230,.16)}
+  .bichinho.acertou{background:rgba(125,216,106,.35); border-color:var(--folha)}
+  .bichinho.errou{background:rgba(220,90,90,.35)}
+  .relogio{
+    height:16px; border-radius:10px; background:rgba(255,246,230,.15); overflow:hidden;
+    max-width:520px; width:100%; margin:0 auto;
+  }
+  .relogio i{display:block; height:100%; background:linear-gradient(90deg,var(--folha),var(--sol)); width:100%}
+
+  /* ---------- Quiz ---------- */
+  .pergunta{
+    font-family:'Baloo 2',sans-serif; font-weight:800;
+    font-size:clamp(1.3rem,4.4vw,1.9rem); text-align:center; text-wrap:balance;
+    line-height:1.25; margin:0;
+  }
+  .alternativas{display:flex; flex-direction:column; gap:12px; max-width:520px; width:100%; margin:0 auto}
+  .alt{
+    font-family:'Nunito',sans-serif; font-weight:700; font-size:1.1rem; text-align:left;
+    background:var(--mata-clara); color:var(--creme);
+    border:3px solid rgba(255,246,230,.2); border-radius:18px;
+    padding:14px 18px; cursor:pointer; transition:transform .12s ease;
+  }
+  .alt:hover:not(:disabled){transform:translateX(5px)}
+  .alt.certa{background:var(--folha); color:#0E3328; border-color:#fff}
+  .alt.errada{background:#8E3A3A}
+  .alt:disabled{cursor:default}
+
+  /* ---------- Fim de jogo ---------- */
+  .overlay{position:fixed; inset:0; z-index:5; background:rgba(6,24,19,.88); display:flex; align-items:center; justify-content:center; padding:18px}
+  .caixa-fim{
+    background:linear-gradient(170deg,#1E5C49,#123A2E); border:4px solid var(--sol);
+    border-radius:30px; padding:32px 26px; max-width:430px; width:100%;
+    text-align:center; display:flex; flex-direction:column; gap:12px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+  }
+  .caixa-fim .festa{font-size:3.2rem; line-height:1}
+  .caixa-fim h3{font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1.9rem; margin:0; color:var(--sol); text-wrap:balance}
+  .caixa-fim p{margin:0; font-size:1.08rem; color:#DCEFE4; line-height:1.5}
+  .acoes{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:6px}
+  #confete{position:fixed; inset:0; z-index:6; pointer-events:none}
+
+  @media (max-width:600px){
+    .tabuleiro.n12, .tabuleiro.n16, .tabuleiro.n24{grid-template-columns:repeat(4, minmax(62px,21vw))}
+    .wrap{padding:18px 12px 44px}
+    .painel{padding:16px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important; transition-duration:.08s !important}}
+</style>
+
+</head>
+<body>
+<div class="folhagem" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header>
+    <h1><span class="a">Portal</span> <span class="b">da</span> <span class="c">Sofi e Mari</span></h1>
+    <p class="sub" id="sub">Escolha um jogo para começar</p>
+  </header>
+
+  <!-- MENU -->
+  <section class="menu" id="menu">
+    <button class="cartao" data-jogo="memoria" style="--cor:#FFC53D">
+      <span class="icone">🐘</span>
+      <span class="titulo">Memória dos Bichos</span>
+      <span class="desc">Ache os pares de animais</span>
+    </button>
+    <button class="cartao" data-jogo="velha" style="--cor:#5CC8E8">
+      <span class="icone">⭕</span>
+      <span class="titulo">Jogo da Velha</span>
+      <span class="desc">Uma contra a outra ou contra o computador</span>
+    </button>
+    <button class="cartao" data-jogo="forca" style="--cor:#FF6FA5">
+      <span class="icone">🍍</span>
+      <span class="titulo">Forca</span>
+      <span class="desc">Adivinhe o bicho ou a fruta letra por letra</span>
+    </button>
+    <button class="cartao" data-jogo="diferente" style="--cor:#7DD86A">
+      <span class="icone">🔍</span>
+      <span class="titulo">Ache o Diferente</span>
+      <span class="desc">Encontre o bichinho diferente antes do tempo acabar</span>
+    </button>
+    <button class="cartao" data-jogo="quiz" style="--cor:#A98BFF">
+      <span class="icone">🧠</span>
+      <span class="titulo">Quiz</span>
+      <span class="desc">10 perguntas de bicho, cor, número e Brasil</span>
+    </button>
+  </section>
+
+  <!-- ÁREA DOS JOGOS -->
+  <section id="palco" hidden></section>
+</div>
+
+<div class="overlay" id="fim" hidden>
+  <div class="caixa-fim" role="dialog" aria-modal="true" aria-labelledby="fimTitulo">
+    <div class="festa" id="fimEmoji">🎉</div>
+    <h3 id="fimTitulo"></h3>
+    <p id="fimTexto"></p>
+    <div class="acoes">
+      <button class="jogar" id="fimDeNovo" style="font-size:1.15rem; padding:12px 28px">Jogar de novo</button>
+      <button class="mini" id="fimMenu">Escolher outro jogo</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="confete" hidden></canvas>
+
+<script>
+(function(){
+  "use strict";
+
+  var $ = function(id){ return document.getElementById(id); };
+  var palco = $("palco"), menu = $("menu"), sub = $("sub");
+
+  /* ============ Utilidades ============ */
+  function embaralhar(a){
+    for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
+  }
+  function escapar(s){
+    return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});
+  }
+  function criar(tag, cls, html){
+    var e=document.createElement(tag);
+    if(cls) e.className=cls;
+    if(html!==undefined) e.innerHTML=html;
+    return e;
+  }
+
+  /* ============ Som ============ */
+  var ctx=null, somLigado=true;
+  function nota(freq, inicio, dur, vol, tipo){
+    if(!somLigado) return;
+    try{
+      if(!ctx) ctx = new (window.AudioContext||window.webkitAudioContext)();
+      if(ctx.state==="suspended") ctx.resume();
+    }catch(e){ return; }
+    var o=ctx.createOscillator(), g=ctx.createGain();
+    o.type=tipo||"triangle"; o.frequency.value=freq;
+    var t=ctx.currentTime+inicio;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(vol||0.16,t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(t); o.stop(t+dur+0.05);
+  }
+  var som = {
+    toque:  function(){ nota(520,0,.10,.09,"sine"); },
+    acerto: function(){ nota(660,0,.14,.16); nota(880,.09,.16,.16); nota(1320,.19,.22,.13); },
+    erro:   function(){ nota(220,0,.18,.10,"sawtooth"); },
+    vitoria:function(){ [523,659,784,1047,784,1047,1319].forEach(function(f,i){ nota(f,i*0.13,.28,.16); }); },
+    fim:    function(){ [440,392,330,262].forEach(function(f,i){ nota(f,i*0.16,.30,.13); }); }
+  };
+
+  /* ============ Confete ============ */
+  function confete(){
+    var cv=$("confete");
+    if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var c=null; try{ c=cv.getContext("2d"); }catch(e){}
+    if(!c) return;
+    cv.hidden=false;
+    var L=cv.width=window.innerWidth, A=cv.height=window.innerHeight;
+    var cores=["#FFC53D","#FF7A3D","#FF6FA5","#7DD86A","#5CC8E8","#FFF6E6","#A98BFF"];
+    var p=[];
+    for(var i=0;i<110;i++){
+      p.push({x:Math.random()*L, y:-20-Math.random()*A*.5, r:5+Math.random()*7,
+        vy:2+Math.random()*3.5, vx:-1.2+Math.random()*2.4,
+        cor:cores[Math.floor(Math.random()*cores.length)],
+        giro:Math.random()*Math.PI, vg:-.12+Math.random()*.24});
+    }
+    var fim=Date.now()+3400;
+    (function anima(){
+      c.clearRect(0,0,L,A);
+      p.forEach(function(q){
+        q.x+=q.vx; q.y+=q.vy; q.giro+=q.vg;
+        c.save(); c.translate(q.x,q.y); c.rotate(q.giro);
+        c.fillStyle=q.cor; c.fillRect(-q.r/2,-q.r/2,q.r,q.r*.6); c.restore();
+      });
+      if(Date.now()<fim) requestAnimationFrame(anima);
+      else { c.clearRect(0,0,L,A); cv.hidden=true; }
+    })();
+  }
+
+  /* ============ Tela de fim ============ */
+  var repetirAtual = null;
+  function mostrarFim(emoji, titulo, texto, ganhou){
+    $("fimEmoji").textContent = emoji;
+    $("fimTitulo").textContent = titulo;
+    $("fimTexto").textContent = texto;
+    $("fim").hidden = false;
+    if(ganhou){ som.vitoria(); confete(); } else { som.fim(); }
+  }
+  $("fimDeNovo").addEventListener("click", function(){
+    $("fim").hidden = true;
+    if(repetirAtual) repetirAtual();
+  });
+  $("fimMenu").addEventListener("click", function(){ $("fim").hidden=true; irParaMenu(); });
+
+  /* ============ Navegação ============ */
+  var timers = [];
+  function esperar(fn, ms){ var t=setTimeout(fn,ms); timers.push(t); return t; }
+  function limparTimers(){
+    timers.forEach(function(t){ clearTimeout(t); clearInterval(t); });
+    timers=[];
+  }
+
+  function irParaMenu(){
+    limparTimers();
+    palco.innerHTML=""; palco.hidden=true;
+    menu.hidden=false;
+    sub.hidden=false;
+    document.body.style.setProperty("--cor","var(--sol)");
+  }
+
+  function abrirJogo(nome){
+    limparTimers();
+    menu.hidden=true;
+    sub.hidden=true;
+    palco.hidden=false;
+    palco.innerHTML="";
+    jogos[nome]();
+  }
+
+  Array.prototype.forEach.call(menu.querySelectorAll(".cartao"), function(b){
+    b.addEventListener("click", function(){ som.toque(); abrirJogo(b.dataset.jogo); });
+  });
+
+  function cabecalho(titulo, cor){
+    var box = criar("div");
+    box.style.cssText = "display:flex; flex-direction:column; gap:14px";
+    var h = criar("h2","tituloJogo",titulo);
+    h.style.setProperty("--cor", cor);
+    var barra = criar("div","barra");
+    var voltar = criar("button","mini","⬅️ Escolher outro jogo");
+    voltar.addEventListener("click", irParaMenu);
+    var bsom = criar("button","mini", somLigado ? "🔊 Som ligado" : "🔇 Som desligado");
+    bsom.addEventListener("click", function(){
+      somLigado=!somLigado;
+      bsom.textContent = somLigado ? "🔊 Som ligado" : "🔇 Som desligado";
+    });
+    barra.appendChild(voltar); barra.appendChild(bsom);
+    box.appendChild(h); box.appendChild(barra);
+    palco.appendChild(box);
+    return box;
+  }
+
+  var jogos = {};
+
+  /* =====================================================
+     1) MEMÓRIA DOS BICHOS
+     ===================================================== */
+  var ANIMAIS = [
+    {e:"🦁",n:"Leão"},{e:"🐯",n:"Tigre"},{e:"🐘",n:"Elefante"},{e:"🦒",n:"Girafa"},
+    {e:"🐼",n:"Panda"},{e:"🐨",n:"Coala"},{e:"🦊",n:"Raposa"},{e:"🐸",n:"Sapo"},
+    {e:"🐢",n:"Tartaruga"},{e:"🦉",n:"Coruja"},{e:"🐬",n:"Golfinho"},{e:"🦋",n:"Borboleta"},
+    {e:"🐙",n:"Polvo"},{e:"🦜",n:"Papagaio"},{e:"🐧",n:"Pinguim"},{e:"🦩",n:"Flamingo"},
+    {e:"🐝",n:"Abelha"},{e:"🐴",n:"Cavalo"},{e:"🐷",n:"Porco"},{e:"🐮",n:"Vaca"},
+    {e:"🐔",n:"Galinha"},{e:"🐳",n:"Baleia"},{e:"🦈",n:"Tubarão"},{e:"🐊",n:"Jacaré"}
+  ];
+  var PEGADAS=["🐾","🌿","🍃","🐾","🌴","🍀"];
+
+  jogos.memoria = function(){
+    var conf = {pares:8, jogadoras:1, nomes:["Sofi","Mari"]};
+
+    function telaEscolha(){
+      palco.innerHTML="";
+      cabecalho("Memória dos Bichos","#FFC53D");
+      var p = criar("div","painel");
+
+      var g1 = criar("div","grupo");
+      g1.appendChild(criar("span","rotulo","Tamanho do jogo"));
+      var e1 = criar("div","escolhas");
+      [[6,"🐣","Fácil · 12 cartas"],[8,"🦊","Médio · 16 cartas"],[12,"🦁","Difícil · 24 cartas"]].forEach(function(o){
+        var b=criar("button","opcao",'<span>'+o[1]+'</span>'+o[2]);
+        b.setAttribute("aria-pressed", o[0]===conf.pares ? "true":"false");
+        b.addEventListener("click",function(){
+          conf.pares=o[0]; som.toque();
+          Array.prototype.forEach.call(e1.children,function(x){x.setAttribute("aria-pressed","false")});
+          b.setAttribute("aria-pressed","true");
+        });
+        e1.appendChild(b);
+      });
+      g1.appendChild(e1); p.appendChild(g1);
+
+      var g2 = criar("div","grupo");
+      g2.appendChild(criar("span","rotulo","Quem vai jogar"));
+      var e2 = criar("div","escolhas");
+      var caixaNomes = criar("div","nomes");
+      caixaNomes.innerHTML = '<input id="mN1" value="Sofi" maxlength="14" aria-label="Nome da jogadora 1">'+
+                             '<input id="mN2" value="Mari" maxlength="14" aria-label="Nome da jogadora 2">';
+      caixaNomes.hidden = true;
+      [[1,"🙋‍♀️","Só eu"],[2,"👯‍♀️","Nós duas"]].forEach(function(o){
+        var b=criar("button","opcao",'<span>'+o[1]+'</span>'+o[2]);
+        b.setAttribute("aria-pressed", o[0]===conf.jogadoras ? "true":"false");
+        b.addEventListener("click",function(){
+          conf.jogadoras=o[0]; som.toque();
+          Array.prototype.forEach.call(e2.children,function(x){x.setAttribute("aria-pressed","false")});
+          b.setAttribute("aria-pressed","true");
+          caixaNomes.hidden = (o[0]!==2);
+        });
+        e2.appendChild(b);
+      });
+      g2.appendChild(e2); g2.appendChild(caixaNomes); p.appendChild(g2);
+
+      var b = criar("button","jogar","Começar! 🐾");
+      b.addEventListener("click", function(){
+        if(conf.jogadoras===2){
+          conf.nomes[0] = ($("mN1").value||"Sofi").trim();
+          conf.nomes[1] = ($("mN2").value||"Mari").trim();
+        }
+        partida();
+      });
+      p.appendChild(b);
+      palco.appendChild(p);
+    }
+
+    function partida(){
+      palco.innerHTML="";
+      cabecalho("Memória dos Bichos","#FFC53D");
+      var placar = criar("div","placar");
+      var barra2 = criar("div","barra");
+      var bEmb = criar("button","mini","🔁 Embaralhar de novo");
+      var bTroca = criar("button","mini","⚙️ Trocar o tamanho");
+      barra2.appendChild(bEmb); barra2.appendChild(bTroca);
+      var tab = criar("div","tabuleiro");
+      palco.appendChild(placar); palco.appendChild(barra2); palco.appendChild(tab);
+
+      var st = {vez:0, pontos:[0,0], jogadas:0, virada:null, travado:false, achados:0};
+
+      function desenharPlacar(){
+        placar.innerHTML="";
+        if(conf.jogadoras===2){
+          for(var i=0;i<2;i++){
+            var d=criar("div","caixa-placar"+(st.vez===i?" vez":""));
+            d.innerHTML='<span class="quem">'+(st.vez===i?"▶ ":"")+escapar(conf.nomes[i])+'</span>'+
+                        '<span class="numero">'+st.pontos[i]+'</span><span class="rotulinho">pares</span>';
+            placar.appendChild(d);
+          }
+        } else {
+          var a=criar("div","caixa-placar vez");
+          a.innerHTML='<span class="quem">Pares achados</span><span class="numero">'+st.pontos[0]+' / '+conf.pares+'</span><span class="rotulinho">continue!</span>';
+          var b2=criar("div","caixa-placar");
+          b2.innerHTML='<span class="quem">Tentativas</span><span class="numero">'+st.jogadas+'</span><span class="rotulinho">quanto menos, melhor</span>';
+          placar.appendChild(a); placar.appendChild(b2);
+        }
+      }
+
+      function montar(){
+        var esc = embaralhar(ANIMAIS.slice()).slice(0, conf.pares);
+        var baralho = embaralhar(esc.concat(esc));
+        tab.className = "tabuleiro n"+baralho.length;
+        tab.innerHTML="";
+        st = {vez:0, pontos:[0,0], jogadas:0, virada:null, travado:false, achados:0};
+        baralho.forEach(function(a){
+          var b=criar("button","carta");
+          b.dataset.nome=a.n;
+          b.setAttribute("aria-label","Carta virada para baixo");
+          b.innerHTML = '<span class="face verso"><span>'+PEGADAS[Math.floor(Math.random()*PEGADAS.length)]+'</span></span>'+
+                        '<span class="face frente"><span class="bicho">'+a.e+'</span><span class="nome">'+a.n+'</span></span>';
+          b.addEventListener("click", function(){ clicar(b); });
+          tab.appendChild(b);
+        });
+        desenharPlacar();
+      }
+
+      function clicar(c){
+        if(st.travado || c.classList.contains("virada") || c.classList.contains("achou")) return;
+        c.classList.add("virada");
+        c.setAttribute("aria-label", c.dataset.nome);
+        som.toque();
+        if(!st.virada){ st.virada=c; return; }
+        st.travado=true; st.jogadas++;
+        var p1=st.virada, p2=c; st.virada=null;
+
+        if(p1.dataset.nome===p2.dataset.nome){
+          esperar(function(){
+            p1.classList.add("achou"); p2.classList.add("achou");
+            p1.disabled=true; p2.disabled=true;
+            st.pontos[st.vez]++; st.achados++;
+            som.acerto(); desenharPlacar(); st.travado=false;
+            if(st.achados===conf.pares) esperar(vencer,500);
+          },260);
+        } else {
+          esperar(function(){ p1.classList.add("erro"); p2.classList.add("erro"); som.erro(); },260);
+          esperar(function(){
+            p1.classList.remove("virada","erro"); p2.classList.remove("virada","erro");
+            p1.setAttribute("aria-label","Carta virada para baixo");
+            p2.setAttribute("aria-label","Carta virada para baixo");
+            if(conf.jogadoras===2) st.vez = st.vez===0?1:0;
+            desenharPlacar(); st.travado=false;
+          },1000);
+        }
+        if(conf.jogadoras===1) desenharPlacar();
+      }
+
+      function vencer(){
+        if(conf.jogadoras===2){
+          var a=st.pontos[0], b2=st.pontos[1];
+          if(a===b2) mostrarFim("🤝","Empate!", conf.nomes[0]+" e "+conf.nomes[1]+" acharam "+a+" pares cada uma.", true);
+          else mostrarFim("🏆",(a>b2?conf.nomes[0]:conf.nomes[1])+" ganhou!", conf.nomes[0]+": "+a+" pares · "+conf.nomes[1]+": "+b2+" pares", true);
+        } else {
+          mostrarFim("🎉","Você achou todos!","Foram "+st.jogadas+" tentativas para achar "+conf.pares+" pares.", true);
+        }
+      }
+
+      repetirAtual = montar;
+      bEmb.addEventListener("click", montar);
+      bTroca.addEventListener("click", telaEscolha);
+      montar();
+    }
+
+    telaEscolha();
+  };
+
+  /* =====================================================
+     2) JOGO DA VELHA
+     ===================================================== */
+  jogos.velha = function(){
+    var conf = {contra:"irma", nomes:["Sofi","Mari"]};
+    var MARCA = ["🐱","🐶"];
+
+    function telaEscolha(){
+      palco.innerHTML="";
+      cabecalho("Jogo da Velha","#5CC8E8");
+      var p=criar("div","painel");
+      var g=criar("div","grupo");
+      g.appendChild(criar("span","rotulo","Contra quem"));
+      var e=criar("div","escolhas");
+      var caixaNomes=criar("div","nomes");
+      caixaNomes.innerHTML='<input id="vN1" value="Sofi" maxlength="14" aria-label="Nome da jogadora 1">'+
+                           '<input id="vN2" value="Mari" maxlength="14" aria-label="Nome da jogadora 2">';
+      [["irma","👯‍♀️","Uma contra a outra"],["facil","🤖","Computador fácil"],["dificil","🧠","Computador esperto"]].forEach(function(o){
+        var b=criar("button","opcao",'<span>'+o[1]+'</span>'+o[2]);
+        b.setAttribute("aria-pressed", o[0]===conf.contra?"true":"false");
+        b.addEventListener("click",function(){
+          conf.contra=o[0]; som.toque();
+          Array.prototype.forEach.call(e.children,function(x){x.setAttribute("aria-pressed","false")});
+          b.setAttribute("aria-pressed","true");
+          caixaNomes.hidden = (o[0]!=="irma");
+        });
+        e.appendChild(b);
+      });
+      g.appendChild(e); g.appendChild(caixaNomes); p.appendChild(g);
+      var b=criar("button","jogar","Começar! ⭕");
+      b.addEventListener("click",function(){
+        if(conf.contra==="irma"){
+          conf.nomes[0]=($("vN1").value||"Sofi").trim();
+          conf.nomes[1]=($("vN2").value||"Mari").trim();
+        } else { conf.nomes[0]="Você"; conf.nomes[1]="Computador"; }
+        partida();
+      });
+      p.appendChild(b);
+      palco.appendChild(p);
+    }
+
+    function partida(){
+      palco.innerHTML="";
+      cabecalho("Jogo da Velha","#5CC8E8");
+      var placar=criar("div","placar");
+      var barra2=criar("div","barra");
+      var bNovo=criar("button","mini","🔁 Nova rodada");
+      var bTroca=criar("button","mini","⚙️ Trocar o adversário");
+      barra2.appendChild(bNovo); barra2.appendChild(bTroca);
+      var grade=criar("div","velha");
+      palco.appendChild(placar); palco.appendChild(barra2); palco.appendChild(grade);
+
+      var tab, vez, fimRodada, vitorias=[0,0], empates=0;
+
+      function desenharPlacar(){
+        placar.innerHTML="";
+        for(var i=0;i<2;i++){
+          var d=criar("div","caixa-placar"+((vez===i && !fimRodada)?" vez":""));
+          d.innerHTML='<span class="quem">'+((vez===i&&!fimRodada)?"▶ ":"")+MARCA[i]+" "+escapar(conf.nomes[i])+'</span>'+
+                      '<span class="numero">'+vitorias[i]+'</span><span class="rotulinho">vitórias</span>';
+          placar.appendChild(d);
+        }
+        var e=criar("div","caixa-placar");
+        e.innerHTML='<span class="quem">Empates</span><span class="numero">'+empates+'</span><span class="rotulinho">deu velha</span>';
+        placar.appendChild(e);
+      }
+
+      var LINHAS=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+      function ganhador(t){
+        for(var i=0;i<LINHAS.length;i++){
+          var l=LINHAS[i];
+          if(t[l[0]]!==null && t[l[0]]===t[l[1]] && t[l[1]]===t[l[2]]) return {quem:t[l[0]], linha:l};
+        }
+        return null;
+      }
+      function livres(t){ var r=[]; t.forEach(function(v,i){ if(v===null) r.push(i); }); return r; }
+
+      function jogadaComputador(){
+        var vagas = livres(tab);
+        if(conf.contra==="facil" && Math.random()<0.55) return vagas[Math.floor(Math.random()*vagas.length)];
+        var i;
+        for(i=0;i<vagas.length;i++){ var t1=tab.slice(); t1[vagas[i]]=1; if(ganhador(t1)) return vagas[i]; }
+        for(i=0;i<vagas.length;i++){ var t2=tab.slice(); t2[vagas[i]]=0; if(ganhador(t2)) return vagas[i]; }
+        if(tab[4]===null) return 4;
+        var cantos=[0,2,6,8].filter(function(c){return tab[c]===null;});
+        if(cantos.length) return cantos[Math.floor(Math.random()*cantos.length)];
+        return vagas[Math.floor(Math.random()*vagas.length)];
+      }
+
+      function novaRodada(){
+        tab=[null,null,null,null,null,null,null,null,null];
+        vez=0; fimRodada=false;
+        grade.innerHTML="";
+        for(var i=0;i<9;i++){
+          (function(idx){
+            var c=criar("button","casa");
+            c.setAttribute("aria-label","Casa "+(idx+1)+" vazia");
+            c.addEventListener("click",function(){ jogar(idx); });
+            grade.appendChild(c);
+          })(i);
+        }
+        desenharPlacar();
+      }
+
+      function pintar(idx){
+        var c=grade.children[idx];
+        c.textContent=MARCA[tab[idx]];
+        c.classList.add("ocupada");
+        c.setAttribute("aria-label","Casa "+(idx+1)+" com "+(tab[idx]===0?"gato":"cachorro"));
+      }
+
+      function jogar(idx){
+        if(fimRodada || tab[idx]!==null) return;
+        if(conf.contra!=="irma" && vez===1) return;
+        tab[idx]=vez; pintar(idx); som.toque();
+        if(checarFim()) return;
+        vez = vez===0?1:0;
+        desenharPlacar();
+        if(conf.contra!=="irma" && vez===1){
+          esperar(function(){
+            var m=jogadaComputador();
+            tab[m]=1; pintar(m); som.toque();
+            if(checarFim()) return;
+            vez=0; desenharPlacar();
+          },520);
+        }
+      }
+
+      function checarFim(){
+        var g=ganhador(tab);
+        if(g){
+          fimRodada=true;
+          g.linha.forEach(function(i){ grade.children[i].classList.add("ganhadora"); });
+          vitorias[g.quem]++;
+          desenharPlacar();
+          esperar(function(){
+            mostrarFim(MARCA[g.quem], conf.nomes[g.quem]+" ganhou!", "Três "+(g.quem===0?"gatinhos":"cachorrinhos")+" em linha.", true);
+          },600);
+          return true;
+        }
+        if(livres(tab).length===0){
+          fimRodada=true; empates++; desenharPlacar();
+          esperar(function(){ mostrarFim("🤝","Deu velha!","Ninguém fez três em linha. Bora de novo?", false); },400);
+          return true;
+        }
+        return false;
+      }
+
+      repetirAtual = novaRodada;
+      bNovo.addEventListener("click", novaRodada);
+      bTroca.addEventListener("click", telaEscolha);
+      novaRodada();
+    }
+
+    telaEscolha();
+  };
+
+  /* =====================================================
+     3) FORCA
+     ===================================================== */
+  var PALAVRAS = [
+    {p:"ELEFANTE",c:"Animal",e:"🐘"},{p:"GIRAFA",c:"Animal",e:"🦒"},{p:"TARTARUGA",c:"Animal",e:"🐢"},
+    {p:"BORBOLETA",c:"Animal",e:"🦋"},{p:"GOLFINHO",c:"Animal",e:"🐬"},{p:"PINGUIM",c:"Animal",e:"🐧"},
+    {p:"CAVALO",c:"Animal",e:"🐴"},{p:"MACACO",c:"Animal",e:"🐵"},{p:"CORUJA",c:"Animal",e:"🦉"},
+    {p:"JACARE",c:"Animal",e:"🐊"},{p:"FLAMINGO",c:"Animal",e:"🦩"},{p:"ESQUILO",c:"Animal",e:"🐿️"},
+    {p:"BALEIA",c:"Animal",e:"🐳"},{p:"ARANHA",c:"Animal",e:"🕷️"},{p:"PAPAGAIO",c:"Animal",e:"🦜"},
+    {p:"ABACAXI",c:"Fruta",e:"🍍"},{p:"MELANCIA",c:"Fruta",e:"🍉"},{p:"MORANGO",c:"Fruta",e:"🍓"},
+    {p:"BANANA",c:"Fruta",e:"🍌"},{p:"LARANJA",c:"Fruta",e:"🍊"},{p:"UVA",c:"Fruta",e:"🍇"},
+    {p:"CEREJA",c:"Fruta",e:"🍒"},{p:"MELAO",c:"Fruta",e:"🍈"},{p:"PESSEGO",c:"Fruta",e:"🍑"},
+    {p:"MANGA",c:"Fruta",e:"🥭"},{p:"LIMAO",c:"Fruta",e:"🍋"},{p:"COCO",c:"Fruta",e:"🥥"},
+    {p:"KIWI",c:"Fruta",e:"🥝"},{p:"PERA",c:"Fruta",e:"🍐"},{p:"MACA",c:"Fruta",e:"🍎"}
+  ];
+
+  jogos.forca = function(){
+    palco.innerHTML="";
+    cabecalho("Forca","#FF6FA5");
+
+    var dica=criar("div","dica");
+    var svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+    svg.setAttribute("viewBox","0 0 200 200"); svg.setAttribute("class","boneco");
+    var palavraBox=criar("div","palavra");
+    var teclado=criar("div","teclado");
+    var barra2=criar("div","barra");
+    var bNova=criar("button","mini","🔁 Outra palavra");
+    barra2.appendChild(bNova);
+
+    palco.appendChild(dica);
+    palco.appendChild(svg);
+    palco.appendChild(palavraBox);
+    palco.appendChild(teclado);
+    palco.appendChild(barra2);
+
+    var atual, achadas, erros, acabou;
+    var PARTES = [
+      '<line class="madeira" x1="20" y1="190" x2="100" y2="190"/><line class="madeira" x1="50" y1="190" x2="50" y2="20"/><line class="madeira" x1="50" y1="20" x2="120" y2="20"/><line class="madeira" x1="120" y1="20" x2="120" y2="45"/>',
+      '<circle cx="120" cy="65" r="20"/>',
+      '<line x1="120" y1="85" x2="120" y2="135"/>',
+      '<line x1="120" y1="98" x2="98" y2="120"/>',
+      '<line x1="120" y1="98" x2="142" y2="120"/>',
+      '<line x1="120" y1="135" x2="100" y2="168"/>',
+      '<line x1="120" y1="135" x2="140" y2="168"/>'
+    ];
+
+    function desenhar(){
+      var s = PARTES[0];
+      for(var i=1;i<=erros;i++) s += PARTES[i];
+      svg.innerHTML = s;
+    }
+
+    function desenharPalavra(){
+      palavraBox.innerHTML="";
+      atual.p.split("").forEach(function(l){
+        var d=criar("div","letra"+(achadas.indexOf(l)===-1?" faltando":""), l);
+        palavraBox.appendChild(d);
+      });
+    }
+
+    function montarTeclado(){
+      teclado.innerHTML="";
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(function(l){
+        var b=criar("button","tecla",l);
+        b.addEventListener("click", function(){ tentar(l,b); });
+        teclado.appendChild(b);
+      });
+    }
+
+    function tentar(l, botao){
+      if(acabou || botao.disabled) return;
+      botao.disabled=true;
+      if(atual.p.indexOf(l)>-1){
+        achadas.push(l);
+        botao.classList.add("certa");
+        som.acerto();
+        desenharPalavra();
+        var falta = atual.p.split("").some(function(x){ return achadas.indexOf(x)===-1; });
+        if(!falta){
+          acabou=true;
+          esperar(function(){ mostrarFim(atual.e,"Acertou!","A palavra era "+atual.p+".", true); },400);
+        }
+      } else {
+        erros++;
+        botao.classList.add("errada");
+        som.erro();
+        desenhar();
+        if(erros>=6){
+          acabou=true;
+          achadas = atual.p.split("");
+          desenharPalavra();
+          esperar(function(){ mostrarFim("😿","Quase!","A palavra era "+atual.p+". Tenta outra?", false); },400);
+        }
+      }
+    }
+
+    function nova(){
+      atual = PALAVRAS[Math.floor(Math.random()*PALAVRAS.length)];
+      achadas=[]; erros=0; acabou=false;
+      var artigo = (atual.c === "Fruta") ? "uma" : "um";
+      dica.innerHTML = "É "+artigo+" <b>"+atual.c.toLowerCase()+"</b> com "+atual.p.length+" letras";
+      desenhar(); desenharPalavra(); montarTeclado();
+    }
+
+    repetirAtual = nova;
+    bNova.addEventListener("click", nova);
+    nova();
+  };
+
+  /* =====================================================
+     4) ACHE O DIFERENTE
+     ===================================================== */
+  var DUPLAS = [
+    ["🐶","🐺"],["🐱","🐯"],["🐭","🐹"],["🐰","🐇"],["🦊","🐕"],["🐻","🐨"],
+    ["🐸","🐢"],["🐵","🙈"],["🐔","🐤"],["🦆","🦢"],["🐝","🦋"],["🐞","🐜"],
+    ["🐠","🐟"],["🐬","🐳"],["🍎","🍏"],["🍊","🍋"],["🍇","🫐"],["🌻","🌼"],
+    ["⭐","🌟"],["🍄","🌷"]
+  ];
+
+  jogos.diferente = function(){
+    palco.innerHTML="";
+    cabecalho("Ache o Diferente","#7DD86A");
+
+    var placar=criar("div","placar");
+    var relogio=criar("div","relogio",'<i></i>');
+    var campo=criar("div","campo");
+    palco.appendChild(placar); palco.appendChild(relogio); palco.appendChild(campo);
+
+    var pontos, nivel, tempo, timer, rodando;
+    var TOTAL = 60;
+
+    function desenharPlacar(){
+      placar.innerHTML =
+        '<div class="caixa-placar vez"><span class="quem">Pontos</span><span class="numero">'+pontos+'</span><span class="rotulinho">acertos</span></div>'+
+        '<div class="caixa-placar"><span class="quem">Rodada</span><span class="numero">'+nivel+'</span><span class="rotulinho">vai ficando difícil</span></div>'+
+        '<div class="caixa-placar"><span class="quem">Tempo</span><span class="numero">'+Math.ceil(tempo)+'s</span><span class="rotulinho">correndo</span></div>';
+    }
+
+    function tamanhoDaRodada(){
+      var qtd = Math.min(4 + nivel*2, 36);
+      var col = Math.min(Math.ceil(Math.sqrt(qtd)), 6);
+      return {qtd:qtd, col:col};
+    }
+
+    function montar(){
+      var t = tamanhoDaRodada();
+      var dupla = DUPLAS[Math.floor(Math.random()*DUPLAS.length)];
+      var trocado = Math.random()<0.5;
+      var normal = trocado?dupla[1]:dupla[0], diferente = trocado?dupla[0]:dupla[1];
+      var alvo = Math.floor(Math.random()*t.qtd);
+
+      campo.style.gridTemplateColumns = "repeat("+t.col+", clamp(46px, "+(70/t.col*2.6)+"vw, 76px))";
+      campo.innerHTML="";
+      for(var i=0;i<t.qtd;i++){
+        (function(idx){
+          var b=criar("button","bichinho", idx===alvo?diferente:normal);
+          b.setAttribute("aria-label", idx===alvo?"bichinho diferente":"bichinho igual aos outros");
+          b.addEventListener("click", function(){
+            if(!rodando) return;
+            if(idx===alvo){
+              b.classList.add("acertou"); som.acerto();
+              pontos++; nivel++; desenharPlacar();
+              esperar(montar, 320);
+            } else {
+              b.classList.add("errou"); som.erro();
+              tempo = Math.max(0, tempo-3);
+              desenharPlacar();
+              esperar(function(){ b.classList.remove("errou"); },350);
+            }
+          });
+          campo.appendChild(b);
+        })(i);
+      }
+    }
+
+    function tique(){
+      tempo -= 0.1;
+      relogio.firstChild.style.width = Math.max(0,(tempo/TOTAL*100))+"%";
+      if(Math.round(tempo*10)%10===0) desenharPlacar();
+      if(tempo<=0){
+        rodando=false; clearInterval(timer);
+        mostrarFim(pontos>=10?"🏅":"⏰", "Tempo!", "Você achou "+pontos+" bichinhos diferentes em "+TOTAL+" segundos.", pontos>=10);
+      }
+    }
+
+    function comecar(){
+      pontos=0; nivel=1; tempo=TOTAL; rodando=true;
+      clearInterval(timer);
+      timer=setInterval(tique,100);
+      timers.push(timer);
+      desenharPlacar(); montar();
+    }
+
+    repetirAtual = comecar;
+    comecar();
+  };
+
+  /* =====================================================
+     5) QUIZ
+     ===================================================== */
+  var PERGUNTAS = [
+    {p:"Qual bicho é o maior do mundo?", o:["A baleia azul","O elefante","A girafa"], c:0},
+    {p:"Quantas patas tem uma aranha?", o:["6","8","10"], c:1},
+    {p:"Que cor sai da mistura de azul com amarelo?", o:["Verde","Roxo","Laranja"], c:0},
+    {p:"Qual é a capital do Brasil?", o:["São Paulo","Rio de Janeiro","Brasília"], c:2},
+    {p:"Qual animal faz mel?", o:["A formiga","A abelha","A borboleta"], c:1},
+    {p:"Quantos dias tem uma semana?", o:["5","7","10"], c:1},
+    {p:"Qual bicho troca de cor para se esconder?", o:["O camaleão","O coelho","O cavalo"], c:0},
+    {p:"O que a planta precisa para crescer?", o:["Só terra","Água e sol","Só vento"], c:1},
+    {p:"Qual é o maior planeta do sistema solar?", o:["Marte","Júpiter","Terra"], c:1},
+    {p:"Quantos lados tem um triângulo?", o:["3","4","5"], c:0},
+    {p:"Qual bicho carrega o filhote numa bolsa?", o:["O canguru","O leão","A zebra"], c:0},
+    {p:"Que animal é conhecido como o rei da selva?", o:["O tigre","O leão","O urso"], c:1},
+    {p:"Qual fruta é vermelha por fora e cheia de sementinhas?", o:["O morango","A banana","A laranja"], c:0},
+    {p:"Quantos minutos tem uma hora?", o:["30","60","100"], c:1},
+    {p:"Qual bicho é o mais alto do mundo?", o:["A girafa","O elefante","O avestruz"], c:0},
+    {p:"Que cor fica quando você mistura vermelho com branco?", o:["Rosa","Marrom","Cinza"], c:0},
+    {p:"Onde o pinguim vive?", o:["No deserto","No gelo","Na floresta"], c:1},
+    {p:"Qual é o rio mais famoso do Brasil?", o:["Amazonas","Nilo","Sena"], c:0},
+    {p:"Quantas cores tem o arco-íris?", o:["5","7","9"], c:1},
+    {p:"Qual bicho dorme de cabeça para baixo?", o:["O morcego","O gato","O peixe"], c:0}
+  ];
+
+  jogos.quiz = function(){
+    palco.innerHTML="";
+    cabecalho("Quiz","#A98BFF");
+
+    var placar=criar("div","placar");
+    var perguntaEl=criar("p","pergunta");
+    var alts=criar("div","alternativas");
+    palco.appendChild(placar); palco.appendChild(perguntaEl); palco.appendChild(alts);
+
+    var fila, indice, acertos;
+
+    function desenharPlacar(){
+      placar.innerHTML =
+        '<div class="caixa-placar vez"><span class="quem">Pergunta</span><span class="numero">'+(indice+1)+' / 10</span><span class="rotulinho">de dez</span></div>'+
+        '<div class="caixa-placar"><span class="quem">Acertos</span><span class="numero">'+acertos+'</span><span class="rotulinho">até agora</span></div>';
+    }
+
+    function mostrar(){
+      var q=fila[indice];
+      desenharPlacar();
+      perguntaEl.textContent=q.p;
+      alts.innerHTML="";
+      var ordem = embaralhar(q.o.map(function(txt,i){ return {txt:txt, certa:i===q.c}; }));
+      ordem.forEach(function(op){
+        var b=criar("button","alt",escapar(op.txt));
+        b.addEventListener("click", function(){
+          Array.prototype.forEach.call(alts.children,function(x){ x.disabled=true; });
+          if(op.certa){ b.classList.add("certa"); acertos++; som.acerto(); }
+          else{
+            b.classList.add("errada"); som.erro();
+            Array.prototype.forEach.call(alts.children,function(x,i){
+              if(ordem[i].certa) x.classList.add("certa");
+            });
+          }
+          desenharPlacar();
+          esperar(function(){
+            indice++;
+            if(indice>=fila.length) terminar();
+            else mostrar();
+          }, op.certa?750:1500);
+        });
+        alts.appendChild(b);
+      });
+    }
+
+    function terminar(){
+      var msg;
+      if(acertos===10) msg="Dez de dez! Você sabe tudo.";
+      else if(acertos>=7) msg="Muito bem! Quase todas certas.";
+      else if(acertos>=4) msg="Boa! Dá para melhorar na próxima.";
+      else msg="Tenta de novo, você vai lembrar!";
+      mostrarFim(acertos>=7?"🏆":"🧠","Você acertou "+acertos+" de 10", msg, acertos>=7);
+    }
+
+    function comecar(){
+      fila = embaralhar(PERGUNTAS.slice()).slice(0,10);
+      indice=0; acertos=0;
+      mostrar();
+    }
+
+    repetirAtual = comecar;
+    comecar();
+  };
+
+})();
+</script>
+
+</body>
+</html>
