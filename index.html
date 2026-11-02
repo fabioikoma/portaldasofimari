@@ -316,6 +316,49 @@
   .capBolinhas i.nao{background:#C6544F; border-color:#C6544F}
   .capBolinhas i.agora{border-color:var(--sol); background:rgba(255,197,61,.4)}
 
+  /* ---------- Descubra a Música ---------- */
+  .musCaixa{display:flex; flex-direction:column; gap:16px}
+  .musTopo{display:flex; flex-direction:column; align-items:center; gap:10px}
+  .musDisco{
+    width:clamp(118px,32vw,156px); aspect-ratio:1; border-radius:50%;
+    background:repeating-radial-gradient(circle at 50% 50%, #151515 0 2px, #272727 2px 5px);
+    box-shadow:0 8px 0 rgba(0,0,0,.3), inset 0 0 0 4px rgba(255,255,255,.07);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .musDisco span{
+    width:40%; aspect-ratio:1; border-radius:50%; background:var(--cor); color:#3A0A2A;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(1.5rem,5vw,2.1rem);
+  }
+  .musDisco.tocando{animation:musGirar 2.4s linear infinite}
+  @keyframes musGirar{to{transform:rotate(360deg)}}
+  .musOndas{display:flex; gap:5px; align-items:flex-end; height:30px}
+  .musOndas i{width:7px; height:6px; border-radius:4px; background:var(--cor); display:block}
+  .musOndas.tocando i{animation:musOnda .8s ease-in-out infinite alternate}
+  .musOndas.tocando i:nth-child(2){animation-delay:.2s}
+  .musOndas.tocando i:nth-child(3){animation-delay:.4s}
+  .musOndas.tocando i:nth-child(4){animation-delay:.1s}
+  .musOndas.tocando i:nth-child(5){animation-delay:.3s}
+  .musOndas.tocando i:nth-child(6){animation-delay:.5s}
+  .musOndas.tocando i:nth-child(7){animation-delay:.15s}
+  @keyframes musOnda{from{height:6px}to{height:30px}}
+  .musQuem{margin:0; font-size:1rem; color:#CFE6DA}
+  .musQuem b{color:var(--cor)}
+  .musStatus{margin:0; text-align:center; font-family:'Baloo 2',sans-serif; font-weight:600; font-size:1.15rem; color:#DCEFE4}
+  .musCaixa .relogio i{background:linear-gradient(90deg,var(--cor),var(--sol)); transition:width .25s linear}
+  .alt small{display:block; font-weight:400; font-size:.88rem; color:#BFDACD; margin-top:2px}
+  .alt.certa small{color:#0E3328}
+  .musRevela{
+    display:flex; gap:14px; align-items:center; max-width:520px; width:100%; margin:0 auto;
+    background:rgba(255,246,230,.07); border-radius:18px; padding:12px;
+  }
+  .musRevela img{width:88px; height:88px; border-radius:12px; flex:none; object-fit:cover; background:#123A2E}
+  .musRevela b{font-family:'Baloo 2',sans-serif; font-size:1.2rem; display:block; line-height:1.2}
+  .musRevela span{display:block; color:#BFDACD; font-size:.95rem}
+  .musRevela em{display:block; font-style:normal; color:#DCEFE4; font-size:.92rem; margin-top:4px; line-height:1.4}
+  .musRegra{margin:0; text-align:center; color:#CFE6DA; font-size:.98rem; line-height:1.6}
+  .musRegra small{color:#A9CBBD; font-size:.86rem}
+
   /* ---------- Fim de jogo ---------- */
   .overlay{position:fixed; inset:0; z-index:5; background:rgba(6,24,19,.88); display:flex; align-items:center; justify-content:center; padding:18px}
   .caixa-fim{
@@ -379,6 +422,11 @@
       <span class="icone">🌍</span>
       <span class="titulo">Capitais do Mundo</span>
       <span class="desc">Descubra a capital de cada país, sozinha ou em dupla</span>
+    </button>
+    <button class="cartao" data-jogo="musica" style="--cor:#FF6FD0">
+      <span class="icone">🎧</span>
+      <span class="titulo">Descubra a Música</span>
+      <span class="desc">Ouça o trecho e adivinhe: KATSEYE e sucessos de 2026</span>
     </button>
   </section>
 
@@ -501,6 +549,7 @@
 
   function irParaMenu(){
     limparTimers();
+    pararMusica();
     palco.innerHTML=""; palco.hidden=true;
     menu.hidden=false;
     sub.hidden=false;
@@ -509,6 +558,7 @@
 
   function abrirJogo(nome){
     limparTimers();
+    pararMusica();
     menu.hidden=true;
     sub.hidden=true;
     palco.hidden=false;
@@ -1496,6 +1546,476 @@
       function comecar(){
         var sorteio = embaralhar(lista.slice()).slice(0, total).map(function(s){ return s.split("|"); });
         st = {perguntas:sorteio, i:0, vez:0, pontos:[0,0], marcas:[]};
+        desenhar();
+      }
+
+      repetirAtual = comecar;
+      bTroca.addEventListener("click", telaEscolha);
+      comecar();
+    }
+
+    telaEscolha();
+  };
+
+  /* =====================================================
+     7) DESCUBRA A MÚSICA
+     O trecho é a prévia oficial de 30 segundos da loja de músicas da Apple.
+     Lista conferida na loja do Brasil em 02/11/2026: todas com prévia e na
+     versão sem palavrão. Os sucessos de 2026 são os que chegaram ao 1º lugar
+     da parada dos Estados Unidos (Billboard Hot 100) em 2026.
+     Formato: id | nome | artista | ano | curiosidade | prévia | capa
+     ===================================================== */
+  var MUS_AUDIO = "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview";
+  var MUS_CAPA  = "https://is1-ssl.mzstatic.com/image/thumb/Music";
+  var MUS_KATSEYE = [
+    "1754230998|Debut|KATSEYE|2024|Lançada em 2024. O nome quer dizer “estreia” em inglês.|221/v4/6b/f3/e9/6bf3e9dc-c794-2ac3-a99b-9ddd21caa6fe/mzaf_11307293089225602480.plus.aac.p.m4a|211/v4/ba/35/9d/ba359dae-1ff5-ef52-4327-e7c6b877ca2b/24UMGIM65526.rgb.jpg",
+    "1759596065|Touch|KATSEYE|2024|Do EP SIS (Soft Is Strong), de 2024.|221/v4/01/71/78/01717890-1fb0-82d8-5f35-4ce899977c45/mzaf_14724894683814329126.plus.aac.p.m4a|221/v4/18/55/5b/18555b5c-2cbe-8821-9a55-cd9d60b8ba58/24UMGIM72777.rgb.jpg",
+    "1753359802|My Way|KATSEYE|2024|Do EP SIS (Soft Is Strong), de 2024.|221/v4/d5/6f/32/d56f32c1-170d-8a90-20c3-24e010d8d033/mzaf_17751707251250705333.plus.aac.p.m4a|221/v4/08/fb/6a/08fb6a32-8856-f1f4-148b-8959bff0efb0/24UMGIM67773.rgb.jpg",
+    "1753359803|I'm Pretty|KATSEYE|2024|Do EP SIS (Soft Is Strong), de 2024.|221/v4/9a/3d/d5/9a3dd5fe-aa0b-d8a5-ed31-535ccd988a46/mzaf_3947347996447714941.plus.aac.p.m4a|221/v4/08/fb/6a/08fb6a32-8856-f1f4-148b-8959bff0efb0/24UMGIM67773.rgb.jpg",
+    "1776155075|Flame|KATSEYE|2024|Da série da Netflix “Jentry Chau Vs the Underworld”.|211/v4/76/18/d9/7618d989-9aba-bd22-3392-609c36f352fa/mzaf_1212373356823634932.plus.aac.p.m4a|221/v4/ba/84/88/ba84886e-e931-5c5b-81ca-f7a3d8e505bb/810123165070.png",
+    "1828469796|Gnarly|KATSEYE|2025|Do EP BEAUTIFUL CHAOS, de 2025.|221/v4/5a/01/48/5a01484e-3c08-6785-fbf0-b45e36447d07/mzaf_9167528730409130272.plus.aac.p.m4a|221/v4/79/ff/46/79ff46ba-7238-30c1-e748-e8f9fc586214/25UMGIM37395.rgb.jpg",
+    "1811464273|Gabriela|KATSEYE|2025|Do EP BEAUTIFUL CHAOS, de 2025.|221/v4/c3/3a/44/c33a44ef-2b2f-3f03-02c9-dd2baa171e5e/mzaf_16705641561621535907.plus.aac.p.m4a|211/v4/ad/92/ca/ad92ca90-90f5-eb46-7a56-e7b6b88584f7/25UMGIM37394.rgb.jpg",
+    "1811464274|Gameboy|KATSEYE|2025|Do EP BEAUTIFUL CHAOS, de 2025.|221/v4/85/bb/ed/85bbed7f-95e2-e34b-5310-374142215d0d/mzaf_5503929957954774414.plus.aac.p.m4a|211/v4/ad/92/ca/ad92ca90-90f5-eb46-7a56-e7b6b88584f7/25UMGIM37394.rgb.jpg",
+    "1811464276|Mean Girls|KATSEYE|2025|Do EP BEAUTIFUL CHAOS, de 2025.|221/v4/82/6f/36/826f36ce-bac6-3c7c-33d0-0883fd13c90e/mzaf_6878797719505828691.plus.aac.p.m4a|211/v4/ad/92/ca/ad92ca90-90f5-eb46-7a56-e7b6b88584f7/25UMGIM37394.rgb.jpg",
+    "1828469844|M.I.A|KATSEYE|2025|Do EP BEAUTIFUL CHAOS, de 2025.|221/v4/da/d6/77/dad677f8-fd13-b58c-e8ee-f23837ac233d/mzaf_9653632468609826412.plus.aac.p.m4a|221/v4/79/ff/46/79ff46ba-7238-30c1-e748-e8f9fc586214/25UMGIM37395.rgb.jpg",
+    "1821481852|Time Lapse|KATSEYE|2025|Da trilha da série de TV GOOD BOY, de 2025.|211/v4/9e/93/92/9e939264-0f8e-b18e-b54b-7412a6e5e8b2/mzaf_18366125128505081771.plus.aac.p.m4a|211/v4/07/11/d3/0711d360-9632-4a2b-f9b9-792ef53bef61/5034644771724.jpg",
+    "1862959661|Internet Girl|KATSEYE|2026|Saiu no dia 2 de janeiro de 2026.|221/v4/63/e3/14/63e314ce-859f-256e-fe2a-d0d0a363b3e1/mzaf_8918006845401470383.plus.aac.p.m4a|211/v4/b7/84/a3/b784a320-7948-b866-0169-e89ffab037ac/25UM2IM07605.rgb.jpg",
+    "1891174353|PINKY UP|KATSEYE|2026|Do EP WILD, de 2026.|221/v4/8a/2d/f8/8a2df8c0-e0d3-d040-5a98-958d4ad25ceb/mzaf_16340910211187354178.plus.aac.p.m4a|211/v4/1a/77/46/1a77460d-493c-a795-92ef-84674905409e/26UMGIM25100.rgb.jpg",
+    "6793209964|Animal|KATSEYE|2026|Do EP WILD, de 2026.|211/v4/41/b9/4c/41b94cc9-bda4-bfb3-ab2c-40cea74bfc1b/mzaf_14893580160728665561.plus.aac.p.m4a|211/v4/35/0e/32/350e32e1-7bfc-6d96-174a-0d11309365ef/26UMGIM84288.rgb.jpg",
+    "1891779777|Hootie Frutti|KATSEYE|2026|Do EP WILD, de 2026.|221/v4/55/fe/49/55fe49c9-9c61-7d74-e98f-a0c1be69d4a5/mzaf_15683549856637703429.plus.aac.p.m4a|211/v4/e2/28/92/e22892a7-fe88-72cf-ecba-691030dfcf7e/26UMGIM41151.rgb.jpg",
+    "1891779778|Bel Air|KATSEYE|2026|Do EP WILD, de 2026.|211/v4/d7/d6/84/d7d6848c-0e44-e66c-b4f9-ea73a8a8f53d/mzaf_8462311950700245101.plus.aac.p.m4a|211/v4/e2/28/92/e22892a7-fe88-72cf-ecba-691030dfcf7e/26UMGIM41151.rgb.jpg",
+    "1891779779|That Way|KATSEYE|2026|Do EP WILD, de 2026.|221/v4/18/32/b4/1832b424-c1f8-a6fe-ac0e-9d89f7aea3b9/mzaf_6912976511726621805.plus.aac.p.m4a|211/v4/e2/28/92/e22892a7-fe88-72cf-ecba-691030dfcf7e/26UMGIM41151.rgb.jpg",
+    "6819456050|Unloveu|KATSEYE|2026|Do EP WILD, de 2026.|221/v4/09/bf/45/09bf452e-110b-8fd2-0513-573ba7ce7022/mzaf_12858641876648953952.plus.aac.p.m4a|221/v4/72/f9/ab/72f9abfa-8779-4b54-6bc9-7b6e8c3031dd/26UMGIM41151.rgb.jpg",
+    "6776078256|ICONIC BY MISTAKE|KATSEYE, LE SSERAFIM e ILLIT|2026|A KATSEYE cantando junto com os grupos LE SSERAFIM e ILLIT.|211/v4/07/47/9e/07479e8e-d0fd-be7d-e88d-da56ecfadcf4/mzaf_17067671692651735856.plus.aac.p.m4a|221/v4/13/96/6c/13966c06-a125-9a6b-d6cc-9ef4294bce41/823375193104_Cover.jpg"
+  ];
+  var MUS_2026 = [
+    "1838810951|The Fate of Ophelia|Taylor Swift|2025|Ficou em 1º lugar nas paradas dos Estados Unidos em 2026.|221/v4/73/ed/fa/73edfa1d-293f-3ef8-208a-3d6eb991e7c0/mzaf_6795004657277951755.plus.aac.p.m4a|221/v4/58/8f/a9/588fa9a2-7cc5-f02c-9ce6-c986e0dc1c15/25UM1IM19577.rgb.jpg",
+    "1866732800|I Just Might|Bruno Mars|2026|Ficou em 1º lugar nas paradas dos Estados Unidos em 2026.|211/v4/86/ef/58/86ef584b-cb46-43df-12e3-fce4b436688c/mzaf_10081886156675578892.plus.aac.p.m4a|211/v4/ed/46/bf/ed46bf4e-7cb9-965a-54f3-03059977fe6c/075679589293.jpg",
+    "1870984033|Aperture|Harry Styles|2026|Ficou em 1º lugar nas paradas dos Estados Unidos em 2026.|221/v4/46/f9/0e/46f90e9b-0d1a-b986-c3f9-0e690e79c79b/mzaf_8629808582610321991.plus.aac.p.m4a|221/v4/07/41/6a/07416a78-38b9-2d47-7ce8-8a52a44c510f/196874010112.jpg",
+    "1844932150|Choosin' Texas|Ella Langley|2025|Ficou em 1º lugar nas paradas dos Estados Unidos em 2026.|211/v4/38/49/4c/38494cb4-f9e0-1db4-0b84-8c478cb55390/mzaf_4251933786704889664.plus.aac.p.m4a|221/v4/e2/91/4d/e2914d0a-7f1d-f04c-fbf4-c50b38548838/196873638690.jpg",
+    "1838810953|Opalite|Taylor Swift|2025|Ficou em 1º lugar nas paradas dos Estados Unidos em 2026.|211/v4/f2/77/86/f27786be-43e4-f7b8-d816-c8ea197cfa72/mzaf_18404718289146256058.plus.aac.p.m4a|221/v4/58/8f/a9/588fa9a2-7cc5-f02c-9ce6-c986e0dc1c15/25UM1IM19577.rgb.jpg",
+    "1868482073|SWIM|BTS|2026|Ficou em 1º lugar nas paradas dos Estados Unidos em 2026.|211/v4/e7/ce/b3/e7ceb389-cb23-f708-cbdb-ff874be51365/mzaf_3407006493764005509.plus.aac.p.m4a|221/v4/e0/a2/b4/e0a2b443-7969-b57a-a591-cb6172c10aa7/198704943959_Cover.jpg",
+    "1889992113|Drop Dead|Olivia Rodrigo|2026|Ficou em 1º lugar nas paradas dos Estados Unidos em 2026.|211/v4/89/57/ad/8957adf6-1862-4e4e-bcb5-810d6cf79cc4/mzaf_7752581374620577831.plus.aac.p.m4a|221/v4/1d/1b/f9/1d1bf9b1-44c6-9a6c-6ffb-c158488c06ce/26UMGIM39303.rgb.jpg",
+    "6774398128|Hate That I Made You Love Me|Ariana Grande|2026|Ficou em 1º lugar nas paradas dos Estados Unidos em 2026.|211/v4/c1/91/48/c1914816-61b7-9c1a-f0d7-e65a7dd023b3/mzaf_17156781226491831673.plus.aac.p.m4a|221/v4/dc/97/01/dc9701ca-b443-2a84-1966-bccee0adf0e7/26UMGIM66898.rgb.jpg",
+    "6775527443|I Knew It, I Knew You|Taylor Swift|2026|Da trilha do filme Toy Story 5. Ficou em 1º lugar nas paradas dos Estados Unidos em 2026.|221/v4/73/76/42/737642e6-c478-bed7-f11f-efee96072450/mzaf_5163950318414409594.plus.aac.p.m4a|221/v4/34/35/6c/34356cb4-bd0b-3bac-b118-1a6d7264dc64/26UMGIM69942.rgb.jpg",
+    "6814997425|Patient Zero|Taylor Swift|2026|Ficou em 1º lugar nas paradas dos Estados Unidos em 2026.|221/v4/ec/c8/21/ecc821bd-1252-51fe-08f0-f3d548dcc91b/mzaf_18965391367399255.plus.aac.p.m4a|221/v4/a0/dd/fd/a0ddfd72-ee9e-f046-6466-a5dbefc696fa/26UM1IM21436.rgb.jpg"
+  ];
+
+  var musAudio = null, musFresco = {}, musBuscando = false, musBuscado = false;
+
+  function pararMusica(){
+    if(!musAudio) return;
+    try{ musAudio.pause(); }catch(e){}
+  }
+
+  /* Pede à loja o endereço mais novo de cada prévia (eles podem mudar com o tempo).
+     Se não der, o jogo usa os endereços guardados acima. */
+  function musBuscarFresco(){
+    if(musBuscando || musBuscado) return;
+    musBuscando = true;
+    var ids = MUS_KATSEYE.concat(MUS_2026).map(function(s){ return s.split("|")[0]; }).join(",");
+    var url = "https://itunes.apple.com/lookup?country=BR&id=" + ids;
+    function guardar(d){
+      musBuscando = false; musBuscado = true;
+      ((d && d.results) || []).forEach(function(r){
+        if(r && r.trackId && r.previewUrl) musFresco[String(r.trackId)] = {p:r.previewUrl, c:r.artworkUrl100 || ""};
+      });
+    }
+    function porScript(){
+      var nome = "musResposta" + Date.now(), s = document.createElement("script");
+      var acabou = function(){ try{ delete window[nome]; }catch(e){ window[nome]=undefined; } if(s.parentNode) s.parentNode.removeChild(s); };
+      window[nome] = function(d){ guardar(d); acabou(); };
+      s.onerror = function(){ musBuscando = false; acabou(); };
+      s.src = url + "&callback=" + nome;
+      document.head.appendChild(s);
+    }
+    if(window.fetch){
+      fetch(url).then(function(r){ if(!r.ok) throw new Error("http"); return r.json(); }).then(guardar).catch(porScript);
+    } else {
+      porScript();
+    }
+  }
+
+  function musLer(s){
+    var p = s.split("|"), f = musFresco[p[0]];
+    var reserva = MUS_AUDIO + p[5];
+    var capa = (f && f.c) ? f.c : (MUS_CAPA + p[6] + "/100x100bb.jpg");
+    return {
+      id:p[0], nome:p[1], artista:p[2], ano:p[3], cur:p[4],
+      audio: (f && f.p) ? f.p : reserva, reserva: reserva,
+      capa: capa.replace("100x100bb", "300x300bb")
+    };
+  }
+
+  function estrelas(n){ var s=""; for(var i=0;i<n;i++) s+="⭐"; return s; }
+  function certas(n){ return n===1 ? "1 música certa" : n+" músicas certas"; }
+
+  jogos.musica = function(){
+    var COR = "#FF6FD0";
+    var LISTAS = [
+      {emoji:"💗", texto:"Só KATSEYE",       chave:"katseye", artista:false},
+      {emoji:"🔥", texto:"Sucessos de 2026", chave:"2026",    artista:true},
+      {emoji:"🎶", texto:"Tudo misturado",   chave:"tudo",    artista:true}
+    ];
+    var conf = {lista:0, jogadoras:1, nomes:["Sofi","Mari"]};
+
+    musBuscarFresco();
+    if(!musAudio){
+      musAudio = new Audio();
+      musAudio.preload = "auto";
+      musAudio.setAttribute("playsinline", "");
+    }
+
+    function listaEscolhida(){
+      var k = LISTAS[conf.lista].chave;
+      if(k === "katseye") return MUS_KATSEYE;
+      if(k === "2026") return MUS_2026;
+      return MUS_KATSEYE.concat(MUS_2026);
+    }
+
+    function telaEscolha(){
+      pararMusica();
+      limparTimers();
+      palco.innerHTML="";
+      cabecalho("Descubra a Música", COR);
+      var p = criar("div","painel");
+
+      var g1 = criar("div","grupo");
+      g1.appendChild(criar("span","rotulo","Que músicas vão tocar"));
+      var e1 = criar("div","escolhas");
+      LISTAS.forEach(function(n, i){
+        var b = criar("button","opcao",'<span>'+n.emoji+'</span>'+n.texto);
+        b.setAttribute("aria-pressed", i===conf.lista ? "true":"false");
+        b.addEventListener("click", function(){
+          conf.lista=i; som.toque();
+          Array.prototype.forEach.call(e1.children,function(x){x.setAttribute("aria-pressed","false")});
+          b.setAttribute("aria-pressed","true");
+        });
+        e1.appendChild(b);
+      });
+      g1.appendChild(e1); p.appendChild(g1);
+
+      var g2 = criar("div","grupo");
+      g2.appendChild(criar("span","rotulo","Quem vai jogar"));
+      var e2 = criar("div","escolhas");
+      var caixaNomes = criar("div","nomes");
+      caixaNomes.innerHTML = '<input id="sN1" value="'+escapar(conf.nomes[0])+'" maxlength="14" aria-label="Nome da jogadora 1">'+
+                             '<input id="sN2" value="'+escapar(conf.nomes[1])+'" maxlength="14" aria-label="Nome da jogadora 2">';
+      caixaNomes.hidden = (conf.jogadoras!==2);
+      [[1,"🙋‍♀️","Só eu"],[2,"👯‍♀️","Nós duas, revezando"]].forEach(function(o){
+        var b = criar("button","opcao",'<span>'+o[1]+'</span>'+o[2]);
+        b.setAttribute("aria-pressed", o[0]===conf.jogadoras ? "true":"false");
+        b.addEventListener("click", function(){
+          conf.jogadoras=o[0]; som.toque();
+          Array.prototype.forEach.call(e2.children,function(x){x.setAttribute("aria-pressed","false")});
+          b.setAttribute("aria-pressed","true");
+          caixaNomes.hidden = (o[0]!==2);
+        });
+        e2.appendChild(b);
+      });
+      g2.appendChild(e2); g2.appendChild(caixaNomes); p.appendChild(g2);
+
+      p.appendChild(criar("p","musRegra",
+        "Quanto mais rápido acertar, mais estrelas:<br>até 5 segundos ⭐⭐⭐ · até 12 segundos ⭐⭐ · depois ⭐<br>"+
+        "<small>Precisa de internet: o trecho vem da loja de músicas da Apple.</small>"));
+
+      var jogar = criar("button","jogar","Soltar o som! 🎧");
+      jogar.addEventListener("click", function(){
+        if(conf.jogadoras===2){
+          conf.nomes[0] = ($("sN1").value||"Sofi").trim() || "Sofi";
+          conf.nomes[1] = ($("sN2").value||"Mari").trim() || "Mari";
+        }
+        partida();
+      });
+      p.appendChild(jogar);
+      palco.appendChild(p);
+    }
+
+    function partida(){
+      palco.innerHTML="";
+      cabecalho("Descubra a Música", COR);
+
+      var nivel = LISTAS[conf.lista];
+      var fonte = listaEscolhida();
+      var total = Math.min(conf.jogadoras===2 ? 12 : 10, fonte.length);
+      if(conf.jogadoras===2) total -= total % 2;
+
+      var placar   = criar("div","placar");
+      var bolinhas = criar("div","capBolinhas");
+      var barra2   = criar("div","barra");
+      var bTroca   = criar("button","mini","⚙️ Trocar as músicas");
+      barra2.appendChild(bTroca);
+      var caixa = criar("div","musCaixa");
+      caixa.style.setProperty("--cor", COR);
+      palco.appendChild(placar);
+      palco.appendChild(bolinhas);
+      palco.appendChild(caixa);
+      palco.appendChild(barra2);
+
+      var st = null;
+
+      function rotulo(q){
+        return escapar(q.nome) + (nivel.artista ? '<small>'+escapar(q.artista)+'</small>' : '');
+      }
+
+      function desenharPlacar(){
+        placar.innerHTML="";
+        if(conf.jogadoras===2){
+          for(var i=0;i<2;i++){
+            var d = criar("div","caixa-placar"+(st.vez===i?" vez":""));
+            d.innerHTML = '<span class="quem">'+(st.vez===i?"▶ ":"")+escapar(conf.nomes[i])+'</span>'+
+                          '<span class="numero">'+st.pontos[i]+' ⭐</span>'+
+                          '<span class="rotulinho">'+certas(st.acertos[i])+'</span>';
+            placar.appendChild(d);
+          }
+        } else {
+          var a = criar("div","caixa-placar vez");
+          a.innerHTML = '<span class="quem">Estrelas</span><span class="numero">'+st.pontos[0]+' ⭐</span><span class="rotulinho">'+certas(st.acertos[0])+'</span>';
+          var b2 = criar("div","caixa-placar");
+          b2.innerHTML = '<span class="quem">Música</span><span class="numero">'+Math.min(st.i+1,total)+'</span><span class="rotulinho">de '+total+'</span>';
+          placar.appendChild(a); placar.appendChild(b2);
+        }
+      }
+
+      function desenharBolinhas(){
+        bolinhas.innerHTML="";
+        for(var k=0;k<total;k++){
+          var i2 = criar("i");
+          if(st.marcas[k]) i2.className = st.marcas[k];
+          else if(k===st.i) i2.className = "agora";
+          bolinhas.appendChild(i2);
+        }
+      }
+
+      function alternativas(certa){
+        var erradas = [], vistos = [certa.nome.toLowerCase()], tentativas = 0;
+        while(erradas.length < 3 && tentativas < 400){
+          tentativas++;
+          var c = musLer(fonte[Math.floor(Math.random()*fonte.length)]);
+          var chave = c.nome.toLowerCase();
+          if(vistos.indexOf(chave) === -1){ vistos.push(chave); erradas.push(c); }
+        }
+        return embaralhar(erradas.concat([certa]));
+      }
+
+      /* Toca o trecho. Precisa ser chamado dentro de um clique (regra do celular). */
+      function tocar(q, r, usarReserva){
+        if(st.rodada !== r) return;
+        r.reserva = !!usarReserva;
+        var src = usarReserva ? q.reserva : q.audio;
+        try{
+          musAudio.src = src;
+          var pr = musAudio.play();
+          if(pr && pr.catch) pr.catch(function(err){
+            if(st.rodada !== r) return;
+            if(err && err.name === "NotAllowedError") r.mostrarPlay();
+          });
+        }catch(e){ r.mostrarPlay(); }
+      }
+
+      function desenhar(){
+        if(st.i >= total) return terminar();
+        var q = st.perguntas[st.i];
+        caixa.innerHTML="";
+        desenharPlacar();
+        desenharBolinhas();
+
+        var r = {inicio:null, respondeu:false, reserva:false};
+        st.rodada = r;
+
+        var topo = criar("div","musTopo");
+        var disco = criar("div","musDisco",'<span>?</span>');
+        var ondas = criar("div","musOndas",'<i></i><i></i><i></i><i></i><i></i><i></i><i></i>');
+        var quem = criar("p","musQuem", conf.jogadoras===2 ? "Vez de <b>"+escapar(conf.nomes[st.vez])+"</b>" : "Música "+(st.i+1)+" de "+total);
+        var status = criar("p","musStatus","Carregando o trecho… 🎧");
+        var tempo = criar("div","relogio",'<i style="width:0%"></i>');
+        var bOuvir = criar("button","mini","🔁 Ouvir de novo");
+        var bPlay = criar("button","jogar","▶️ Tocar a música");
+        bPlay.hidden = true;
+        var bPular = criar("button","mini","⏭️ Pular esta música");
+        bPular.hidden = true;
+        topo.appendChild(disco); topo.appendChild(ondas); topo.appendChild(quem);
+        topo.appendChild(status); topo.appendChild(tempo); topo.appendChild(bPlay);
+        var acoes = criar("div","barra");
+        acoes.appendChild(bOuvir); acoes.appendChild(bPular);
+        topo.appendChild(acoes);
+        caixa.appendChild(topo);
+
+        r.mostrarPlay = function(){
+          bPlay.hidden = false;
+          status.textContent = "Toque no botão para ouvir 👇";
+        };
+        function girando(sim){
+          disco.classList.toggle("tocando", sim);
+          ondas.classList.toggle("tocando", sim);
+        }
+
+        musAudio.onplaying = function(){
+          if(st.rodada !== r) return;
+          if(r.inicio === null) r.inicio = Date.now();
+          bPlay.hidden = true; bPular.hidden = true;
+          girando(true);
+          if(!r.respondeu) status.textContent = "Que música é essa? 🤔";
+        };
+        musAudio.onpause = function(){ if(st.rodada === r) girando(false); };
+        musAudio.onended = function(){
+          if(st.rodada !== r) return;
+          girando(false);
+          if(!r.respondeu) status.textContent = "Acabou o trecho. Escolha uma resposta ou ouça de novo.";
+        };
+        musAudio.ontimeupdate = function(){
+          if(st.rodada !== r) return;
+          var d = musAudio.duration;
+          if(d && isFinite(d)) tempo.firstChild.style.width = Math.min(100, musAudio.currentTime/d*100) + "%";
+        };
+        musAudio.onerror = function(){
+          if(st.rodada !== r) return;
+          if(!r.reserva && q.reserva !== q.audio){ tocar(q, r, true); return; }
+          girando(false);
+          status.textContent = "Não consegui tocar esta música. A internet está ligada?";
+          bPular.hidden = false;
+        };
+
+        esperar(function(){
+          if(st.rodada !== r || r.inicio !== null) return;
+          status.textContent = "A internet está devagar… ainda carregando 🐢";
+          bPular.hidden = false;
+        }, 9000);
+
+        bOuvir.addEventListener("click", function(){
+          som.toque();
+          if(musAudio.src && !musAudio.error){
+            try{ musAudio.currentTime = 0; var pr = musAudio.play(); if(pr && pr.catch) pr.catch(function(){}); }catch(e){}
+          } else {
+            tocar(q, r, r.reserva);
+          }
+        });
+        bPlay.addEventListener("click", function(){ tocar(q, r, r.reserva); });
+        bPular.addEventListener("click", function(){
+          som.toque();
+          if(st.sobra.length){
+            st.perguntas[st.i] = musLer(st.sobra.shift());
+            desenhar();
+          } else {
+            responder(null, q, botoes);
+          }
+        });
+
+        var alts = criar("div","alternativas");
+        var botoes = [];
+        alternativas(q).forEach(function(op){
+          var b = criar("button","alt", rotulo(op));
+          b.dataset.id = op.id;
+          b.addEventListener("click", function(){ responder(op, q, botoes); });
+          botoes.push(b); alts.appendChild(b);
+        });
+        caixa.appendChild(alts);
+
+        tocar(q, r, false);
+      }
+
+      function responder(escolha, q, botoes){
+        var r = st.rodada;
+        if(r.respondeu) return;
+        r.respondeu = true;
+        var acertou = !!escolha && escolha.nome.toLowerCase() === q.nome.toLowerCase();
+        botoes.forEach(function(b){
+          b.disabled = true;
+          if(b.dataset.id === q.id) b.classList.add("certa");
+          else if(escolha && b.dataset.id === escolha.id) b.classList.add("errada");
+        });
+
+        var seg = r.inicio === null ? 0 : (Date.now() - r.inicio) / 1000;
+        var stt = caixa.querySelector(".musStatus");
+        if(stt) stt.textContent = "Curta o resto do trecho 🎶";
+        var aviso = criar("p","capAviso "+(acertou?"ok":"nao"));
+        if(acertou){
+          var n = seg <= 5 ? 3 : (seg <= 12 ? 2 : 1);
+          st.pontos[st.vez] += n;
+          st.acertos[st.vez]++;
+          st.marcas[st.i] = "ok";
+          aviso.textContent = (conf.jogadoras===2 ? "Isso, "+conf.nomes[st.vez]+"! " : "Isso! ") + estrelas(n);
+          som.acerto();
+        } else {
+          st.marcas[st.i] = "nao";
+          aviso.textContent = "Quase! Era essa aqui 👇";
+          som.erro();
+        }
+        caixa.appendChild(aviso);
+
+        var rev = criar("div","musRevela");
+        var img = criar("img");
+        img.alt = "Capa de " + q.nome;
+        img.src = q.capa;
+        img.addEventListener("error", function(){ img.hidden = true; });
+        var txt = criar("div","",
+          '<b>'+escapar(q.nome)+'</b>'+
+          '<span>'+escapar(q.artista)+' · '+escapar(q.ano)+'</span>'+
+          (q.cur ? '<em>'+escapar(q.cur)+'</em>' : ''));
+        rev.appendChild(img); rev.appendChild(txt);
+        caixa.appendChild(rev);
+
+        /* a capa vira o meio do disco */
+        var miolo = caixa.querySelector(".musDisco span");
+        if(miolo){
+          var fundo = new Image();
+          fundo.onload = function(){ miolo.textContent = ""; miolo.style.background = "center/cover no-repeat url(\"" + q.capa + "\")"; };
+          fundo.src = q.capa;
+        }
+
+        desenharPlacar();
+        desenharBolinhas();
+
+        var ultima = st.i + 1 >= total;
+        var seguinte = st.vez===0 ? 1 : 0;
+        var proxima = criar("button","jogar",
+          ultima ? "Ver o resultado 🏁"
+                        : (conf.jogadoras===2 ? "Vez de "+escapar(conf.nomes[seguinte])+" ➡️" : "Próxima música ➡️"));
+        proxima.style.cssText = "font-size:1.15rem; padding:12px 30px";
+        proxima.addEventListener("click", function(){
+          som.toque();
+          st.i++;
+          if(conf.jogadoras===2) st.vez = seguinte;
+          desenhar();
+        });
+        caixa.appendChild(proxima);
+        proxima.focus();
+      }
+
+      function lerRecorde(){
+        try{ return parseInt(localStorage.getItem("portal.musica.recorde."+nivel.chave), 10) || 0; }catch(e){ return 0; }
+      }
+      function gravarRecorde(n){
+        try{ localStorage.setItem("portal.musica.recorde."+nivel.chave, String(n)); }catch(e){}
+      }
+
+      function terminar(){
+        pararMusica();
+        st.rodada = null;
+        if(conf.jogadoras===2){
+          var a = st.pontos[0], b2 = st.pontos[1];
+          var detalhe = conf.nomes[0]+": "+a+" ⭐ ("+st.acertos[0]+" certas) · "+conf.nomes[1]+": "+b2+" ⭐ ("+st.acertos[1]+" certas)";
+          if(a === b2) mostrarFim("🤝","Empate!","As duas fizeram "+a+" estrelas. "+detalhe, true);
+          else mostrarFim("🏆",(a>b2?conf.nomes[0]:conf.nomes[1])+" ganhou!", detalhe, true);
+        } else {
+          var certas = st.acertos[0], pts = st.pontos[0], antes = lerRecorde(), msg;
+          if(certas === total) msg = "Acertou todas! Ouvido de ouro.";
+          else if(certas >= total*0.7) msg = "Muito bem! Faltou pouquinho.";
+          else if(certas >= total*0.4) msg = "Boa! Na próxima você acerta mais.";
+          else msg = "Tenta de novo: cada volta você conhece músicas novas.";
+          if(pts > antes){ gravarRecorde(pts); msg += " Novo recorde: "+pts+" ⭐!"; }
+          else if(antes) msg += " Seu recorde é "+antes+" ⭐.";
+          mostrarFim(certas >= total*0.7 ? "🏆" : "🎧", "Você acertou "+certas+" de "+total+" e fez "+pts+" ⭐", msg, certas >= total*0.7);
+        }
+      }
+
+      function comecar(){
+        var todas = embaralhar(fonte.slice());
+        st = {
+          perguntas: todas.slice(0, total).map(musLer),
+          sobra: todas.slice(total),
+          i:0, vez:0, pontos:[0,0], acertos:[0,0], marcas:[], rodada:null
+        };
         desenhar();
       }
 
